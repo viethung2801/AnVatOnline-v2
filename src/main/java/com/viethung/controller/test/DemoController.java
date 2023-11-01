@@ -6,9 +6,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class DemoController {
-    @GetMapping("/home")
-    public String home(Model model){
-        model.addAttribute("message","Home Page");
-        return "home";
-    }
+
 }
