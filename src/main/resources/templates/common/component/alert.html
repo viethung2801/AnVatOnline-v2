@@ -1,0 +1,32 @@
+
+<th:block>
+    <th:block th:if="${fail}">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            [[${fail}]]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+        </div>
+    </th:block>
+    <th:block th:if="${success}">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            [[${success}]]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+        </div>
+    </th:block>
+
+    <th:block th:if="${param.fail}">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            [[${param.fail}]]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+        </div>
+    </th:block>
+    <th:block th:if="${param.success}">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            [[${param.success}]]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+        </div>
+    </th:block>
+</th:block>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-th:replace="~{client-layout :: clientLayout(~{:: title},~{:: main})}">
+      th:replace="~{client-layout :: clientLayout(~{:: title},~{:: main})}">
 
 <head>
     <title>Trang cá nhân</title>
@@ -61,7 +61,7 @@ th:replace="~{client-layout :: clientLayout(~{:: title},~{:: main})}">
 
                             <li class="nav-item">
                                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">
-                                    Change Password
+                                    Đổi mật khẩu
                                 </button>
                             </li>
 
@@ -308,39 +308,80 @@ th:replace="~{client-layout :: clientLayout(~{:: title},~{:: main})}">
 
                             <div class="tab-pane fade pt-3" id="profile-change-password">
                                 <!-- Change Password Form -->
-                                <form>
+
+                                <th:block>
+                                    <th:block th:if="${fail}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            [[${fail}]]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                    </th:block>
+                                    <th:block th:if="${success}">
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            [[${success}]]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${param.fail}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            [[${param.fail}]]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                    </th:block>
+                                    <th:block th:if="${param.success}">
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            [[${param.success}]]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                    </th:block>
+                                </th:block>
+
+                                <form action="/change-password" method="post" th:object="${changePasswordDto}">
 
                                     <div class="row mb-3">
-                                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current
-                                            Password</label>
+                                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">
+                                            Mật Khẩu hiện tại
+                                        </label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="password" type="password" class="form-control"
-                                                   id="currentPassword">
+                                                   id="currentPassword" th:field="*{oldPassword}">
+                                            <div class="errors" th:errors="*{oldPassword}"></div>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New
-                                            Password</label>
+                                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">
+                                            Mật khẩu mới
+                                        </label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="newpassword" type="password" class="form-control"
-                                                   id="newPassword">
+                                                   id="newPassword" th:field="*{newPassword}">
+                                            <div class="errors" th:errors="*{newPassword}"></div>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter
-                                            New Password</label>
+                                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">
+                                            Nhập lại mật khẩu
+                                        </label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="renewpassword" type="password" class="form-control"
-                                                   id="renewPassword">
+                                                   id="renewPassword" th:field="*{confirmPassword}">
+                                            <div class="errors" th:errors="*{confirmPassword}"></div>
                                         </div>
+
                                     </div>
 
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Change Password</button>
+                                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
                                     </div>
-                                </form><!-- End Change Password Form -->
+                                </form>
+                                <!-- End Change Password Form -->
 
                             </div>
 

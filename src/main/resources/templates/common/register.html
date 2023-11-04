@@ -1,85 +1,138 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-th:replace="~{client-layout :: clientLayout(~{:: title},~{:: main})}">
+      th:replace="~{client-layout :: clientLayout(~{:: title},~{:: main})}">
 
 <head>
-    <title>Title</title>
+    <title>Đăng Kí Tài Khoản</title>
 </head>
 
 <body>
 
-    <main id="main">
-        <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8 col-md-6 d-flex flex-column align-items-center justify-content-center">
+<main id="main">
+    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-6 d-flex flex-column align-items-center justify-content-center">
 
-                        <div class="d-flex justify-content-center py-4">
-                            <a href="index.html" class="logo d-flex align-items-center w-auto">
-                                <img src="../images/logo.png" alt="">
-                            </a>
-                        </div><!-- End Logo -->
+                    <div class="d-flex justify-content-center py-4">
+                        <a href="index.html" class="logo d-flex align-items-center w-auto">
+                            <img src="../images/logo.png" alt="">
+                        </a>
+                    </div><!-- End Logo -->
 
-                        <div class="card mb-3">
+                    <div class="card mb-3">
 
-                            <div class="card-body">
-                                <div class="pt-4 pb-2">
-                                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
-                                    <p class="text-center small">Enter your personal details to create account</p>
+                        <div class="card-body">
+                            <div class="pt-4 pb-2">
+                                <h5 class="card-title text-center pb-0 fs-4">Tạo tài khoản</h5>
+                                <p class="text-center small">Nhập thông tin cá nhân của bạn để tạo tài khoản
+                                </p>
+                            </div>
+
+                            <form class="row g-3 needs-validation" th:object="${userRegisterDto}" action="/register"
+                                  method="post">
+                                <th:block>
+                                    <th:block th:if="${fail}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            [[${fail}]]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                    </th:block>
+                                    <th:block th:if="${success}">
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            [[${success}]]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${param.fail}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            [[${param.fail}]]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                    </th:block>
+                                    <th:block th:if="${param.success}">
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            [[${param.success}]]
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                    </th:block>
+                                </th:block>
+                                <div class="col-12">
+                                    <label for="lastName" class="form-label">Họ</label>
+                                    <input type="text" class="form-control" id="lastName"
+                                           th:field="*{lastName}">
+                                    <div class="errors" th:errors="*{lastName}"></div>
+                                </div>
+                                <div class="col-12">
+                                    <label for="firstName" class="form-label">Tên</label>
+                                    <input type="text" class="form-control" id="firstName"
+                                           th:field="*{firstName}" required>
+                                    <div class="errors" th:errors="*{firstName}"></div>
                                 </div>
 
-                                <form class="row g-3 needs-validation" novalidate>
-                                    <div class="col-12">
-                                        <label for="yourName" class="form-label">Your Name</label>
-                                        <input type="text" name="name" class="form-control" id="yourName" required>
-                                        <div class="invalid-feedback">Please, enter your name!</div>
-                                    </div>
+                                <div class="col-12">
+                                    <label for="phoneNumber" class="form-label">Số điện thoại *</label>
+                                    <input type="text" class="form-control" id="phoneNumber"
+                                           th:field="*{phoneNumber}" required>
+                                    <div class="errors" th:errors="*{phoneNumber}"></div>
+                                </div>
 
-                                    <div class="col-12">
-                                        <label for="yourEmail" class="form-label">Your Email</label>
-                                        <input type="email" name="email" class="form-control" id="yourEmail" required>
-                                        <div class="invalid-feedback">Please enter a valid Email adddress!</div>
-                                    </div>
+                                <div class="col-12">
+                                    <label for="yourEmail" class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="yourEmail" th:field="*{email}"
+                                           required>
+                                    <div class="errors" th:errors="*{email}"></div>
+                                </div>
 
-                                    <div class="col-12">
-                                        <label for="yourUsername" class="form-label">Username</label>
-                                        <div class="input-group has-validation">
-                                            <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                            <input type="text" name="username" class="form-control" id="yourUsername" required>
-                                            <div class="invalid-feedback">Please choose a username.</div>
-                                        </div>
-                                    </div>
+                                <div class="col-12">
+                                    <label for="password" class="form-label">Password</label>
+                                    <div class="input-group has-validation">
+                                        <span class="input-group-text" id="inputGroupPrepend"><i id="iconEye"
+                                                                                                 class="bi bi-eye"
+                                                                                                 style="cursor: pointer"></i></span>
+                                        <input type="password" th:field="*{password}" class="form-control" id="password"
+                                               required
+                                        >
 
-                                    <div class="col-12">
-                                        <label for="yourPassword" class="form-label">Password</label>
-                                        <input type="password" name="password" class="form-control" id="yourPassword" required>
-                                        <div class="invalid-feedback">Please enter your password!</div>
                                     </div>
+                                    <div class="errors" th:errors="*{password}"></div>
+                                </div>
 
-                                    <div class="col-12">
-                                        <div class="form-check">
-                                            <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
-                                            <label class="form-check-label" for="acceptTerms">I agree and accept the <a href="#">terms and conditions</a></label>
-                                            <div class="invalid-feedback">You must agree before submitting.</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <button class="btn btn-primary w-100" type="submit">Create Account</button>
-                                    </div>
-                                    <div class="col-12">
-                                        <p class="small mb-0">Already have an account? <a href="/login">Log
-                                                in</a></p>
-                                    </div>
-                                </form>
+                                <div class="col-12">
+                                    <button class="btn btn-primary w-100" type="submit">Tạo tài khoản</button>
+                                </div>
+                                <div class="col-12">
+                                    <p class="small mb-0">Bạn đã có tài khoản ?
+                                        <a href="/login">Đăng nhập</a>
+                                    </p>
+                                </div>
+                            </form>
 
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-        </section>
-    </main>
+        </div>
+        <script>
+            var iconEye = document.getElementById("iconEye");
+            var password = document.getElementById("password");
+            var isShow = false;
+            iconEye.addEventListener("click", () => {
+                isShow = !isShow;
+                if (isShow) {
+                    password.type = 'text'
+                } else {
+                    password.type = 'password'
+                }
+            })
+        </script>
+    </section>
+</main>
 </body>
 
 </html>
