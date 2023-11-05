@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin-layout :: admin-layout(~{::title},~{::main})}">
+<head>
+    <title>Thêm danh mục</title>
+</head>
+
+<body>
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Thêm mục sản phẩm</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/categories">Danh mục</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/categories/save">Thêm danh mục</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- End Page Title -->
+
+    <section class="section">
+
+        <div class="card">
+            <div class="card-body">
+                <!--                <h5 class="card-title">Multi Columns Form</h5>-->
+
+                <!-- Multi Columns Form -->
+                <form class="row g-3" action="/admin/categories/save" th:object="${categoryDto}">
+                    <input hidden="hidden" type="text" class="form-control" id="id" th:field="*{id}"/>
+                    <div class="col-md-12">
+                        <label for="code" class="form-label">Mã danh mục:</label>
+                        <input type="text" class="form-control" id="code" th:field="*{code}"/>
+                        <label class="errors" th:errors="*{code}"></label>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="name" class="form-label">Tên danh mục:</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}"/>
+                        <label class="errors" th:errors="*{name}"></label>
+                    </div>
+                    <div class="">
+                        <button type="submit"
+                                class="btn btn-success"
+                                th:formaction="'/admin/categories/save'"
+                                th:formmethod="post">
+                            Lưu
+                        </button>
+                        <a class="btn btn-danger"
+                                th:href="@{/admin/categories/delete/{id}(id=${categoryDto.id})}"
+                                th:hidden="${categoryDto.id == null ? true: false}"
+                        >
+                            Xóa
+                        </a>
+                    </div>
+                </form>
+                <!-- End Multi Columns Form -->
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

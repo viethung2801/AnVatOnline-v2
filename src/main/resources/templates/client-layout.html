@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="clientLayout(title,main)">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org" th:fragment="clientLayout(title,main)"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
 <head>
     <meta charset="UTF-8">
     <title th:replace="${title}"></title>

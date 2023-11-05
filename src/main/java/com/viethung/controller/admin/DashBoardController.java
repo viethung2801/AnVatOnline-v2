@@ -12,4 +12,8 @@ public class DashBoardController {
     public String displayView(Model model){
         return "admin/page/dashboard";
     }
+    @GetMapping("")
+    public String displayView(){
+        return "redirect:/admin/dashboard";
+    }
 }

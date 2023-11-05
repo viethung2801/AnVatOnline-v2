@@ -36,6 +36,13 @@ public class RegisterServiceImpl {
         // kiểm tra code trùng
         String userCode = generateUserCode();
         Role role = roleRepository.findByRoleName(ERoleName.ROLE_USER);
+        if (role == null){
+            roleRepository.save(Role.builder().roleName(ERoleName.ROLE_USER).build());
+            Role roleAdmin = roleRepository.findByRoleName(ERoleName.ROLE_ADMIN);
+            if (roleAdmin == null){
+                roleRepository.save(Role.builder().roleName(ERoleName.ROLE_ADMIN).build());
+            }
+        }
         ArrayList<Role> roles = new ArrayList<>();
         roles.add(role);
         User userSave = User.builder()

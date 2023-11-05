@@ -53,7 +53,7 @@ public class MailServiceImpl {
             mimeMessageHelper.setFrom(from);
             mimeMessageHelper.setTo(mailModel.getTo());
             mimeMessageHelper.setSubject(mailModel.getSubject());
-            mimeMessageHelper.setText(mailModel.getBody());
+            mimeMessageHelper.setText(mailModel.getBody(),true);
             if (mailModel.getCc() != null) {
                 mimeMessageHelper.setCc(mailModel.getCc());
             }
