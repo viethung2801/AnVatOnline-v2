@@ -25,6 +25,7 @@ import java.util.UUID;
 public class CustomUserDetails implements UserDetails {
     private UUID id;
     private String username;
+    private String imageUrl;
     private String lastName;
     private String firstName;
     private String password;
@@ -42,6 +43,7 @@ public class CustomUserDetails implements UserDetails {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .password(user.getPassword())
+                .imageUrl(user.getImageUrl())
                 .build();
     }
 

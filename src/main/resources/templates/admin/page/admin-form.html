@@ -2,23 +2,23 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{admin-layout :: admin-layout(~{::title},~{::main})}">
 <head>
-    <title>Thêm khách hàng</title>
+    <title>Thêm Admin</title>
 </head>
 
 <body>
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Thêm khách hàng</h1>
+        <h1>Thêm Admin</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
                     <a href="/admin/dashboard">Trang chủ</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="/admin/customers">Khách hàng</a>
+                    <a href="/admin/admins">Admin</a>
                 </li>
                 <li class="breadcrumb-item ">
-                    <a href="/admin/customers/save">Thêm khách hàng</a>
+                    <a href="/admin/admins/save">Thêm Admin</a>
                 </li>
             </ol>
         </nav>
@@ -63,12 +63,12 @@
                 </th:block>
 
                 <!-- Multi Columns Form -->
-                <form class="row g-3" action="/admin/customers/save" th:object="${customerDto}"
+                <form class="row g-3" action="/admin/admins/save" th:object="${adminDto}"
                       enctype="multipart/form-data">
                     <input hidden="hidden" type="text" class="form-control" id="id" th:field="*{id}"/>
                     <!--Image upload here-->
                     <div>
-                        <img th:src="@{/images/{url}(url=${customerDto.imageName ?: 'gamer.png'})}" id="imagePreview"
+                        <img th:src="@{/images/{url}(url=${adminDto.imageName ?: 'gamer.png'})}" id="imagePreview"
                              alt="Ảnh xem trước"
                              style="max-width: 150px; max-height: 150px;"/>
                     </div>
@@ -85,7 +85,7 @@
                         <label class="errors" th:errors="*{imageUrl}"></label>
                     </div>
                     <div class="col-md-12">
-                        <label for="code" class="form-label">Mã khách hàng:</label>
+                        <label for="code" class="form-label">Mã Admin:</label>
                         <input type="text" class="form-control" id="code" th:field="*{code}"/>
                         <label class="errors" th:errors="*{code}"></label>
                     </div>
@@ -147,7 +147,7 @@
                         <input type="text" class="form-control" id="address" th:field="*{address}"/>
                         <label class="errors" th:errors="*{address}"></label>
                     </div>
-                    <th:block th:if="${customerDto.id == null}">
+                    <th:block th:if="${adminDto.id == null}">
                         <div class="col-md-12">
                             <label for="password" class="form-label">Mật khẩu:</label>
                             <input type="text" class="form-control" id="password" th:field="*{password}"/>
@@ -159,24 +159,24 @@
                     <div class="">
                         <button type="submit"
                                 class="btn btn-success"
-                                th:formaction="'/admin/customers/add'"
+                                th:formaction="'/admin/admins/add'"
                                 th:formmethod="post"
-                                th:hidden="${customerDto.id != null ? true: false}"
+                                th:hidden="${adminDto.id != null ? true: false}"
                         >
                             Lưu
                         </button>
                         <button type="submit"
                                 class="btn btn-success"
-                                th:formaction="'/admin/customers/update'"
+                                th:formaction="'/admin/admins/update'"
                                 th:formmethod="post"
-                                th:hidden="${customerDto.id == null ? true: false}"
+                                th:hidden="${adminDto.id == null ? true: false}"
                         >
                             Lưu
                         </button>
                         <a class="btn btn-danger"
-                           th:href="@{/admin/customers/delete/{id}(id=${customerDto.id})}"
-                           th:hidden="${customerDto.id == null ? true: false}"
-                           onclick="return confirm('Bạn có chắc muốn xóa Khách hàng này không ?')"
+                           th:href="@{/admin/admins/delete/{id}(id=${adminDto.id})}"
+                           th:hidden="${adminDto.id == null ? true: false}"
+                           onclick="return confirm('Bạn có chắc muốn xóa Admin này không ?')"
                         >
                             Xóa
                         </a>

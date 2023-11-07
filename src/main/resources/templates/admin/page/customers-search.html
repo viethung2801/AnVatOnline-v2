@@ -73,7 +73,7 @@
                                             placeholder="Nhập mã, họ tên, số điện thoại, email ..."
                                             type="text"
                                             name="keys"
-                                            th:value="${param.keys}"
+                                            th:value="${param.keys ?: ''}"
                                     />
                                     <button class="btn btn-primary">
                                         Tìm kiếm
@@ -108,7 +108,9 @@
                                                     <img th:src="@{/images/{url} (url=${c.imageUrl ?: 'gamer.png'})}"
                                                          alt="" width="32px">
                                                 </td>
-                                                <td th:text="${c.lastName + ' ' +c.firstName}"></td>
+                                                <td >
+                                                    <a th:href="'#'" th:text="${c.lastName + ' ' +c.firstName}"></a>
+                                                </td>
                                                 <td th:text="${c.gender != null ? (c.gender == true ?'Nam' : 'Nữ') :''}"></td>
                                                 <td th:text="${c.email}"></td>
                                                 <td th:text="${c.phoneNumber}"></td>

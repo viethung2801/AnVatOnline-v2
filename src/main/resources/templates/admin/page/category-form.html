@@ -52,8 +52,9 @@
                             Lưu
                         </button>
                         <a class="btn btn-danger"
-                                th:href="@{/admin/categories/delete/{id}(id=${categoryDto.id})}"
-                                th:hidden="${categoryDto.id == null ? true: false}"
+                           th:href="@{/admin/categories/delete/{id}(id=${categoryDto.id})}"
+                           th:hidden="${categoryDto.id == null ? true: false}"
+                           onclick="return confirm('Bạn có chắc muốn xóa Danh mục này không ?')"
                         >
                             Xóa
                         </a>

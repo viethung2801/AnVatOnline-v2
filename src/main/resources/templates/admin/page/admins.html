@@ -2,20 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{admin-layout :: admin-layout(~{::title},~{::main})}">
 <head>
-    <title>Khách Hàng</title>
+    <title>Admin</title>
 </head>
 
 <body>
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Danh sách khách hàng</h1>
+        <h1>Danh sách Admin</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
                     <a href="/admin/dashboard">Trang chủ</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="/admin/customers">Khách hàng</a>
+                    <a href="/admin/admins">Admin</a>
                 </li>
             </ol>
         </nav>
@@ -58,7 +58,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <a href="/admin/customers/save" class="btn btn-primary float-end">
+                        <a href="/admin/admins/save" class="btn btn-primary float-end">
                             Thêm
                         </a>
 
@@ -67,7 +67,7 @@
                                 class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns"
                         >
                             <div class="datatable-top">
-                                <form class="datatable-search d-flex" method="get" action="/admin/customers/search">
+                                <form class="datatable-search d-flex" method="get" action="/admin/admins/search">
                                     <input
                                             class="datatable-input form-control w-50"
                                             placeholder="Nhập mã, họ tên, số điện thoại, email ..."
@@ -81,11 +81,11 @@
                                 </form>
                             </div>
                             <div class="datatable-container">
-                                <th:block th:if="${customers.totalElements == 0}">
+                                <th:block th:if="${admins.totalElements == 0}">
                                     <h2 class="pt-5 text-center">Bạn chưa có danh mục nào</h2>
                                 </th:block>
 
-                                <th:block th:if="${customers.totalElements != 0}">
+                                <th:block th:if="${admins.totalElements != 0}">
                                     <table class="table datatable datatable-table">
                                         <thead>
                                         <tr>
@@ -100,8 +100,8 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr th:each="c,i:${customers}">
-                                            <th:block th:if="${c.roles.size() < 2}">
+                                        <tr th:each="c,i:${admins}">
+                                            <th:block th:if="${c.roles.size() > 1}">
                                                 <td th:text="${i.index +1 }"></td>
                                                 <td th:text="${c.code}"></td>
                                                 <td>
@@ -115,7 +115,7 @@
                                                 <td th:text="${c.email}"></td>
                                                 <td th:text="${c.phoneNumber}"></td>
                                                 <td>
-                                                    <a th:href="@{/admin/customers/{id}(id=${c.id}) }"><i
+                                                    <a th:href="@{/admin/admins/{id}(id=${c.id}) }"><i
                                                             class="bi bi-pencil"></i>Sửa</a>
                                                 </td>
                                             </th:block>
@@ -124,18 +124,14 @@
 
                                     </table>
                                     <div class="datatable-bottom">
-<!--                                        <div class="datatable-info">-->
-<!--                                            [[${1 * (customers.number + 1)}]] - [[${customers.numberOfElements *-->
-<!--                                            (customers.number + 1)}]] / [[${customers.totalElements}]]-->
-<!--                                        </div>-->
                                         <nav aria-label="Page navigation example">
                                             <ul class="pagination justify-content-end datatable-pagination-list">
                                                 <li class="page-item "
-                                                    th:each="p: ${#numbers.sequence(0,customers.totalPages -1)}"
+                                                    th:each="p: ${#numbers.sequence(0,admins.totalPages -1)}"
                                                     th:classappend="${param.page != null and param.page == p.toString() ? 'active' : ''}"
                                                 >
                                                     <a class="page-link"
-                                                       th:href="@{/admin/customers(page=${p})}"
+                                                       th:href="@{/admin/admins(page=${p})}"
                                                        th:text="${p+1}">
                                                     </a>
                                                 </li>
