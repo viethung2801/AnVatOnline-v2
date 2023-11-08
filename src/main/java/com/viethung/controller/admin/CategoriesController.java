@@ -98,7 +98,6 @@ public class CategoriesController {
         Page<Category> categories = categoryService.search(keys.orElse(""),pageable);
 
         model.addAttribute("categories", categories);
-        model.addAttribute("action", "search");
-        return "/admin/page/categories-search";
+        return "/admin/page/categories";
     }
 }

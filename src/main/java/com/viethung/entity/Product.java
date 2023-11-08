@@ -1,6 +1,7 @@
 package com.viethung.entity;
 
 import com.viethung.entity.ENUM.EProductStatus;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +16,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,10 +31,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id ;
+    private UUID id;
 
     @Column(name = "code", columnDefinition = "nvarchar(20)", unique = true, nullable = false)
     private String code;
@@ -65,6 +68,6 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product",cascade = CascadeType.REMOVE)
     private List<ProductImage> productImages;
 }

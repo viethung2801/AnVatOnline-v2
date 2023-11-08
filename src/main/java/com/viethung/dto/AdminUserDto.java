@@ -1,7 +1,5 @@
 package com.viethung.dto;
 
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,18 +12,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.UUID;
-
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Builder
-public class CustomerDto {
+public class AdminUserDto {
     private UUID id;
 
     @NotBlank(message = "Mã không được trống")
     private String code;
 
     private MultipartFile imageUrl;
+
     private String imageName;
 
     @NotBlank(message = "Tên không được trống")
@@ -49,6 +47,9 @@ public class CustomerDto {
 
     private String address;
 
-//    @NotBlank(message = "Mật khẩu không được trống")
+    //    @NotBlank(message = "Mật khẩu không được trống")
     private String password;
+
+    @NotNull(message = "Bạn chưa chọn chức vụ")
+    private int position;
 }

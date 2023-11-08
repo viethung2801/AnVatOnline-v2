@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin-layout :: admin-layout(~{::title},~{::main})}">
+<head>
+    <title>Thêm sản phẩm</title>
+</head>
+
+<body>
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Thêm sản phẩm</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/products">Sản phẩm</a>
+                </li>
+                <li class="breadcrumb-item ">
+                    <a href="/admin/products/save">Thêm sản phẩm</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- End Page Title -->
+
+    <section class="section">
+
+        <div class="card">
+            <div class="card-body">
+
+                <th:block>
+                    <th:block th:if="${fail}">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            [[${fail}]]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${success}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            [[${success}]]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                    </th:block>
+
+                    <th:block th:if="${param.fail}">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            [[${param.fail}]]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${param.success}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            [[${param.success}]]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                    </th:block>
+                </th:block>
+
+                <!-- Multi Columns Form -->
+                <form class="row g-3" action="/admin/products/save" th:object="${productFormDto}"
+                      enctype="multipart/form-data">
+                    <th:block th:if="${productFormDto.id}">
+                        <input hidden="hidden" type="text" class="form-control" th:field="*{id}"/>
+                    </th:block>
+                    <div class="col-md-12">
+                        <label for="code" class="form-label">Mã sản phẩm:</label>
+                        <input type="text" class="form-control" id="code" th:field="*{code}"/>
+                        <label class="errors" th:errors="*{code}"></label>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="name" class="form-label">Tên sản phẩm:</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}"/>
+                        <label class="errors" th:errors="*{name}"></label>
+                    </div>
+
+                    <div class="col-md-12">
+                        Ảnh sản phẩm:
+                        <input type="file"
+                               accept="image/*"
+                               class="form-control"
+                               id="imageUrl"
+                               onchange="displayImageProduct(this)"
+                               multiple
+                               th:field="*{images}"
+                        />
+                        <label class="errors" th:errors="*{images}"></label>
+                    </div>
+                    <div class="col-md-12 row" id="imagePreview">
+                        <!--Image upload here-->
+                        <th:block th:if="*{imageUrls}">
+                            <img class="col-2 p-1" th:each="img : *{imageUrls}" th:src="@{/images/{img}(img=${img})}"
+                                 alt="">
+                        </th:block>
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <label for="name" class="form-label">Danh mục:</label><label class="errors"
+                                                                                     th:errors="*{categoryId}"></label>
+                        <br>
+                        <select class="form-select" aria-label="category" th:field="*{categoryId}">
+                            <option
+                                    th:each="c :${categories}"
+                                    th:value="${c.id}"
+                                    th:text="${c.name}"
+                                    th:selected="${c.id == productFormDto.categoryId}"
+                            ></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="price" class="form-label">Giá bán:</label>
+                        <input type="number" class="form-control" id="price" min="0" step="1" th:field="*{price}"/>
+                        <label class="errors" th:errors="*{price}"></label>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cost" class="form-label">Giá nhập:</label>
+                        <input type="number" class="form-control" id="cost" min="0" step="1" th:field="*{cost}"/>
+                        <label class="errors" th:errors="*{cost}"></label>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Trạng thái:</label>
+                        <br>
+                        <!--Nam-->
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="status"
+                                       value="1"
+                                       th:field="*{status}"
+                                />Đang bán
+                            </label>
+                        </div>
+                        <!--Nữ-->
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="status"
+                                       value="0"
+                                       th:field="*{status}"
+                                /> Dừng bán
+                            </label>
+                        </div>
+                        <label class="errors" th:errors="*{status}"></label>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="weight" class="form-label">Trọng lượng (Kg):</label>
+                        <input type="number" class="form-control" id="weight" min="0" step="0.1" th:field="*{weight}"/>
+                        <label class="errors" th:errors="*{weight}"></label>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="description" class="form-label">Mô tả:</label>
+                        <input type="text" class="form-control" id="description" th:field="*{description}"/>
+                        <label class="errors" th:errors="*{description}"></label>
+                    </div>
+
+                    <div class="">
+                        <th:block th:if="${productFormDto.id}">
+                            <button type="submit"
+                                    class="btn btn-success"
+                                    th:formaction="'/admin/products/save'"
+                                    th:formmethod="post"
+                            >
+                                Lưu
+                            </button>
+                        </th:block>
+                        <th:block th:if="${productFormDto.id == null}">
+                            <button type="submit"
+                                    class="btn btn-success"
+                                    th:formaction="'/admin/products/add'"
+                                    th:formmethod="post"
+                            >
+                                Thêm
+                            </button>
+                        </th:block>
+                        <th:block th:if="${productFormDto.id}">
+                            <a class="btn btn-danger"
+                               th:href="@{/admin/products/delete/{id}(id=${productFormDto.id})}"
+                               onclick="return confirm('Bạn có chắc muốn xóa Sản phẩm này không ?')"
+                            >
+                                Xóa
+                            </a>
+                        </th:block>
+
+
+                    </div>
+                </form>
+                <!-- End Multi Columns Form -->
+            </div>
+        </div>
+    </section>
+    <script src="/js/previewImage.js"></script>
+</main>
+
+</body>
+</html>

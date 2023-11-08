@@ -1,8 +1,8 @@
 package com.viethung.controller.admin;
 
-import com.viethung.dto.AdminDto;
+import com.viethung.dto.AdminUserDto;
 import com.viethung.entity.User;
-import com.viethung.service.AdminsServiceImpl;
+import com.viethung.service.AdminUserServiceImpl;
 import com.viethung.service.RegisterServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,69 +25,70 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminsController {
+public class UsersController {
     @Autowired
-    private AdminsServiceImpl adminsService;
+    private AdminUserServiceImpl adminUserService;
 
     @Autowired
     private RegisterServiceImpl registerService;
 
 
-    @GetMapping("/admins")
-    public String showAllAdmin(@RequestParam Optional<Integer> page,
-                                  Model model) {
+    @GetMapping("/users")
+    public String showAllUser(@RequestParam Optional<Integer> page,
+                               Model model) {
         Pageable pageable = PageRequest.of(page.orElse(0), 50);
-        Page<User> admins = adminsService.findAll(pageable);
-        model.addAttribute("admins", admins);
-        return "/admin/page/admins";
+        Page<User> users = adminUserService.findAll(pageable);
+        model.addAttribute("users", users);
+        return "/admin/page/users";
     }
 
-    @GetMapping("/admins/{id}")
+    @GetMapping("/users/{id}")
     public String displayAdminDetail(@PathVariable UUID id, Model model) {
-        AdminDto adminDto = adminsService.findById(id);
-        model.addAttribute("adminDto", adminDto);
-        return "/admin/page/admin-form";
+        AdminUserDto adminUserDto = adminUserService.findById(id);
+        model.addAttribute("adminUserDto", adminUserDto);
+        return "/admin/page/user-form";
     }
 
-    @GetMapping("/admins/save")
+    @GetMapping("/users/save")
     public String onAdd(Model model) {
-        AdminDto adminDto = AdminDto.builder()
+        AdminUserDto adminUserDto = AdminUserDto.builder()
                 .code(registerService.generateUserCode())
+                .position(0)
                 .gender(true)
                 .build();
-        model.addAttribute("adminDto", adminDto);
-        return "/admin/page/admin-form";
+        model.addAttribute("adminUserDto", adminUserDto);
+        return "/admin/page/user-form";
     }
-
-    @PostMapping("/admins/add")
-    public String onAdd(@Valid @ModelAttribute AdminDto  adminDto,
+//
+    @PostMapping("/users/add")
+    public String onAdd(@Valid @ModelAttribute AdminUserDto  adminUserDto,
                         BindingResult result,
                         Model model,
                         RedirectAttributes redirectAttributes) {
-        //
+
         try {
             //check value
-            if (adminsService.existsByCode(adminDto.getCode())) {
+            if (adminUserService.existsByCode(adminUserDto.getCode())) {
                 result.rejectValue("code", "duplicate", "Mã đã tồn tại");
             }
-            if (adminsService.existsByEmail(adminDto.getEmail())) {
+            if (adminUserService.existsByEmail(adminUserDto.getEmail())) {
                 result.rejectValue("email", "duplicate", "Email đã tồn tại");
             }
-            if (adminsService.existsByPhoneNumber(adminDto.getPhoneNumber())) {
+            if (adminUserService.existsByPhoneNumber(adminUserDto.getPhoneNumber())) {
                 result.rejectValue("phoneNumber", "duplicate", "Số điện thoại đã tồn tại");
             }
-            if (adminDto.getPassword().isEmpty()) {
+            if (adminUserDto.getPassword().isEmpty()) {
                 result.rejectValue("password", "invalid", "Mật khẩu không được trống");
             }
             //check format
             if (result.hasErrors()) {
-                model.addAttribute("adminDto", adminDto);
-                return "/admin/page/admin-form";
+                model.addAttribute("adminUserDto", adminUserDto);
+                return "/admin/page/user-form";
             }
-            // Save
-            if (adminsService.handleAdd(adminDto)) {
+             // Save
+            if (adminUserService.handleAdd(adminUserDto)) {
                 redirectAttributes.addFlashAttribute("success", "Lưu thành công");
-                return "redirect:/admin/admins";
+                return "redirect:/admin/users";
             }
 
 
@@ -95,68 +96,68 @@ public class AdminsController {
             model.addAttribute("fail", "Kích thước của hình ảnh không được vượt quá 20MB");
             e.printStackTrace();
         }
-        model.addAttribute("adminDto", adminDto);
-        return "/admin/page/admin-form";
+        model.addAttribute("adminUserDto", adminUserDto);
+        return "/admin/page/user-form";
     }
 
-    @PostMapping("/admins/update")
-    public String onUpdate(@Valid @ModelAttribute AdminDto adminDto,
+    @PostMapping("/users/update")
+    public String onUpdate(@Valid @ModelAttribute AdminUserDto adminUserDto,
                            BindingResult result,
                            Model model,
                            RedirectAttributes redirectAttributes) {
         //
         try {
             //check value
-            if (adminsService.countByCodeAndIdNot(adminDto.getCode(), adminDto.getId()) > 0) {
+            if (adminUserService.countByCodeAndIdNot(adminUserDto.getCode(), adminUserDto.getId()) > 0) {
                 result.rejectValue("code", "duplicate", "Mã đã tồn tại");
             }
-            if (adminsService.countByEmailAndIdNot(adminDto.getEmail(), adminDto.getId()) > 0) {
+            if (adminUserService.countByEmailAndIdNot(adminUserDto.getEmail(), adminUserDto.getId()) > 0) {
                 result.rejectValue("email", "duplicate", "Email đã tồn tại");
             }
-            if (adminsService.countByPhoneNumberAndIdNot(adminDto.getPhoneNumber(), adminDto.getId()) > 0) {
+            if (adminUserService.countByPhoneNumberAndIdNot(adminUserDto.getPhoneNumber(), adminUserDto.getId()) > 0) {
                 result.rejectValue("phoneNumber", "duplicate", "Số điện thoại đã tồn tại");
             }
             //check format
             if (result.hasErrors()) {
-                model.addAttribute("adminDto", adminDto);
-                return "/admin/page/admin-form";
+                model.addAttribute("adminUserDto", adminUserDto);
+                return "/admin/page/user-form";
             }
             //save
-            if (adminsService.handleUpdate(adminDto)) {
+            if (adminUserService.handleUpdate(adminUserDto)) {
                 redirectAttributes.addFlashAttribute("success", "Lưu thành công");
-                return "redirect:/admin/admins";
+                return "redirect:/admin/users";
             }
 
         } catch (Exception e) {
             model.addAttribute("fail", "Kích thước của hình ảnh không được vượt quá 20MB");
             e.printStackTrace();
         }
-        model.addAttribute("adminDto", adminDto);
-        return "/admin/page/admin-form";
+        model.addAttribute("adminUserDto", adminUserDto);
+        return "/admin/page/user-form";
     }
 
     //delete
-    @GetMapping("/admins/delete/{id}")
+    @GetMapping("/users/delete/{id}")
     public String onDeleteById(@PathVariable UUID id,
                                RedirectAttributes redirectAttributes) {
         try {
-            adminsService.deleteById(id);
+            adminUserService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Xóa thành công");
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("fail", "Xóa thất bại");
         }
-        return "redirect:/admin/admins";
+        return "redirect:/admin/users";
     }
-
+//
     //search
-    @GetMapping("/admins/search")
+    @GetMapping("/users/search")
     public String search(@RequestParam Optional<Integer> page,
                          @RequestParam Optional<String> keys,
                          Model model) {
         Pageable pageable = PageRequest.of(page.orElse(0), 50);
-        Page<User> admins = adminsService.findAllByKeys(pageable,keys.orElse(""));
-        model.addAttribute("admins", admins);
-        return "/admin/page/admin-search";
+        Page<User> users = adminUserService.findAllByKeys(pageable,keys.orElse(""));
+        model.addAttribute("users", users);
+        return "/admin/page/users";
     }
 }

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{admin-layout :: admin-layout(~{::title},~{::main})}">
 <head>
-    <title>Danh mục</title>
+    <title>Sản phẩm</title>
 </head>
 
 <body>
@@ -10,9 +10,9 @@
     <div class="pagetitle">
         <nav>
             <div class="d-flex justify-content-between align-items-center">
-                <h1>Danh mục sản phẩm</h1>
+                <h1>Danh sách sản phẩm</h1>
                 <div class="">
-                    <a href="/admin/categories/save" class="btn btn-primary"> Thêm </a>
+                    <a href="/admin/products/save" class="btn btn-primary"> Thêm </a>
                 </div>
             </div>
             <ol class="breadcrumb">
@@ -20,11 +20,12 @@
                     <a href="/admin/dashboard">Trang chủ</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="/admin/categories">Danh mục</a>
+                    <a href="/admin/products">Sản phẩm</a>
                 </li>
             </ol>
         </nav>
     </div>
+
     <!-- End Page Title -->
 
     <section class="section">
@@ -63,10 +64,10 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="row p-2">
-                        <form class="d-flex col-7" method="get" action="/admin/categories/search">
+                        <form class="d-flex col-7 " method="get" action="/admin/products/search">
                             <input
                                     class="datatable-input form-control w-75"
-                                    placeholder="Nhập mã danh mục hoặc tên danh mục ..."
+                                    placeholder="Nhập mã, họ tên, số điện thoại, email ..."
                                     type="text"
                                     name="keys"
                                     th:value="${param.keys ?: ''}"
@@ -75,69 +76,95 @@
                                 Tìm kiếm
                             </button>
                         </form>
-
                         <div class="col-2">
                         </div>
                         <div class="col-3">
+                            <select class="form-select" onchange="handleFilter(event.target.value)">
+                                <option value="all">Tất cả</option>
+                                <option value="active">Đang bán</option>
+                                <option value="inActive">Ngừng bán</option>
+                            </select>
                         </div>
 
                     </div>
                     <div class="card-body">
-
                         <!-- Table with stripped rows -->
                         <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
 
                             <div class="datatable-container">
-                                <th:block th:if="${categories.totalElements == 0}">
-                                    <h2 class="pt-5 text-center">Bạn chưa có danh mục nào</h2>
+                                <th:block th:if="${productListDtos.size == null or productListDtos.size <= 0}">
+                                    <h2 class="pt-5 text-center">Bạn chưa có Sản phẩm nào</h2>
                                 </th:block>
+                                <th:block
+                                        th:if="${productListDtos.size != null or productListDtos.size > 0}">
 
-                                <th:block th:if="${categories.totalElements != 0}">
                                     <table class="table datatable datatable-table">
                                         <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Mã Danh mục</th>
-                                            <th>Tên Danh mục</th>
+                                            <th>Ảnh</th>
+                                            <th>Mã</th>
+                                            <th>Tên Sản phẩm</th>
+                                            <th>Tên danh mục</th>
+                                            <th>Trạng thái</th>
+                                            <th>Giá bán</th>
+                                            <th>Ngày tạo</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr th:each="c,i:${categories}">
-                                            <td th:text="${i.index +1 }"></td>
-                                            <td th:text="${c.code }"></td>
-                                            <td th:text="${c.name }"></td>
+                                        <tbody id="products">
+                                        <tr th:each="p,i:${productListDtos}" class="product-detail"
+                                            th:classappend="${p.status == 1 ? 'active' :'inActive'}">
+                                            <td th:text="${i.index +1}"></td>
                                             <td>
-                                                <a th:href="@{/admin/categories/{id}(id=${c.id}) }"><i
+                                                <img th:src="@{/images/{imageUrl} (imageUrl=${p.imageUrl})}" alt=""
+                                                     width="100px">
+                                            </td>
+                                            <td th:text="${p.code}"></td>
+                                            <td>
+                                                <a href="#" th:text="${p.name}"></a>
+                                            </td>
+                                            <td th:text="${p.categoryName}"></td>
+                                            <td >
+                                                <th:block th:if="${p.status == 1}">
+                                                    <span class="badge bg-primary">Đang bán</span>
+                                                </th:block>
+                                                <th:block th:if="${p.status == 0}">
+                                                    <span class="badge bg-warning">Dừng bán</span>
+                                                </th:block>
+                                            </td>
+                                            <td th:text="${#numbers.formatDecimal(p.price,3,'POINT',0,'COMMA') + ' đ'}"></td>
+                                            <td th:text="${#temporals.format(p.createdDate,'dd-MM-yyyy HH:mm:ss')}"></td>
+                                            <td>
+                                                <a th:href="@{/admin/products/{id}(id=${p.id}) }"><i
                                                         class="bi bi-pencil"></i>Sửa</a>
                                             </td>
+
                                         </tr>
                                         </tbody>
 
                                     </table>
                                     <div class="datatable-bottom">
-                                        <div class="datatable-info">
-                                            [[${1 * (categories.number + 1)}]] - [[${categories.numberOfElements *
-                                            (categories.number + 1)}]] / [[${categories.totalElements}]]
-                                        </div>
                                         <nav aria-label="Page navigation example">
                                             <ul class="pagination justify-content-end datatable-pagination-list">
-                                                <li class="page-item "
-                                                    th:each="p: ${#numbers.sequence(0,categories.totalPages -1)}">
-                                                    <th:block th:if="${param.keys == null}">
+                                                <th:block th:if="${param.keys == null}">
+                                                    <li class="page-item "
+                                                        th:each="p: ${#numbers.sequence(0,productListDtos.totalPages -1)}">
                                                         <a class="page-link"
-                                                           th:href="@{/admin/categories(page=${p})}"
+                                                           th:href="@{/admin/products(page=${p})}"
                                                            th:text="${p+1}">
                                                         </a>
-                                                    </th:block>
-                                                    <th:block th:if="${param.keys != null}">
+                                                    </li>
+                                                </th:block>
+                                                <th:block th:if="${param.keys != null}">
+                                                    <li class="page-item "
+                                                        th:each="p: ${#numbers.sequence(0,productListDtos.totalPages -1)}">
                                                         <a class="page-link"
-                                                           th:href="@{/admin/categories/search(page=${p},keys=${param.keys})}"
+                                                           th:href="@{/admin/products/search(page=${p},keys=${param.keys})}"
                                                            th:text="${p+1}">
                                                         </a>
-                                                    </th:block>
-
-                                                </li>
+                                                    </li>
+                                                </th:block>
                                             </ul>
                                         </nav>
                                     </div>
@@ -150,6 +177,7 @@
                 </div>
             </div>
         </div>
+        <script src="/js/product-filter.js"></script>
     </section>
 </main>
 
