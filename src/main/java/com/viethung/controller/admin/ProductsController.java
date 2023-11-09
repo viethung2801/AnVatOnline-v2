@@ -39,7 +39,7 @@ public class ProductsController {
     @GetMapping("/products")
     public String showAllProduct(@RequestParam Optional<Integer> page,
                                  Model model) {
-        Pageable pageable = PageRequest.of(page.orElse(0),50,Sort.by("createdDate"));
+        Pageable pageable = PageRequest.of(page.orElse(0),50,Sort.by("createdDate").descending());
         Page<ProductListDto> productListDtos = productService.findProducts(pageable);
         model.addAttribute("productListDtos",productListDtos);
         return "admin/page/products";
@@ -139,7 +139,7 @@ public class ProductsController {
     public String searchProduct(@RequestParam Optional<Integer> page,
                                  @RequestParam Optional<String> keys,
                                  Model model) {
-        Pageable pageable = PageRequest.of(page.orElse(0),50,Sort.by("createdDate"));
+        Pageable pageable = PageRequest.of(page.orElse(0),50,Sort.by("createdDate").descending());
         Page<ProductListDto> productListDtos = productService.searchProducts(keys.orElse(""),pageable);
         model.addAttribute("productListDtos",productListDtos);
         return "admin/page/products";

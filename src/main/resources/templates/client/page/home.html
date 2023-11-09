@@ -10,103 +10,31 @@
 <main id="main">
     <!-- category -->
     <section>
-        <div class="container pt-5">
-            <nav class="row gy-4">
-                <div class="col-lg-6 col-md-12">
-                    <div class="row">
-                        <div class="col-3">
-                            <a href="#" class="text-center d-flex flex-column justify-content-center">
-                                <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1"
-                                        data-mdb-ripple-color="dark">
-                                    <img th:src="@{/images/icon/bubble-tea.png}">
-                                </button>
-                                <div class="text-dark fw-bold">Trà sữa</div>
-                            </a>
-                        </div>
-                        <div class="col-3">
-                            <a href="#" class="text-center d-flex flex-column justify-content-center">
-                                <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1"
-                                        data-mdb-ripple-color="dark">
-                                    <img src="./images/icon/sweet-soup.png">
-                                </button>
-                                <div class="text-dark fw-bold">Chè</div>
-                            </a>
-                        </div>
-                        <div class="col-3">
-                            <a href="#" class="text-center d-flex flex-column justify-content-center">
-                                <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1"
-                                        data-mdb-ripple-color="dark">
-                                    <img src="./images/icon/smoothie.png">
-                                </button>
-                                <div class="text-dark fw-bold">Sinh tố</div>
-                            </a>
-                        </div>
-                        <div class="col-3">
-                            <a href="#" class="text-center d-flex flex-column justify-content-center">
-                                <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1"
-                                        data-mdb-ripple-color="dark">
-                                    <img src="./images/icon/noodle.png">
-                                </button>
-                                <div class="text-dark fw-bold">Mì</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-12">
-                    <div class="row">
-                        <div class="col-3">
-                            <a href="#" class="text-center d-flex flex-column justify-content-center">
-                                <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1"
-                                        data-mdb-ripple-color="dark">
-                                    <img src="./images/icon/pizza.png">
-                                </button>
-                                <div class="text-dark fw-bold">Pizza</div>
-                            </a>
-                        </div>
-                        <div class="col-3">
-                            <a href="#" class="text-center d-flex flex-column justify-content-center">
-                                <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1"
-                                        data-mdb-ripple-color="dark">
-                                    <img src="./images/icon/spring-rolls.png">
-                                </button>
-                                <div class="text-dark fw-bold">Đồ cuốn</div>
-                            </a>
-                        </div>
-                        <div class="col-3">
-                            <a href="#" class="text-center d-flex flex-column justify-content-center">
-                                <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1"
-                                        data-mdb-ripple-color="dark">
-                                    <img src="./images/icon/fried.png">
-                                </button>
-                                <div class="text-dark fw-bold">Đồ chiên</div>
-                            </a>
-                        </div>
-                        <div class="col-3">
-                            <a href="#" class="text-center d-flex flex-column justify-content-center">
-                                <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1"
-                                        data-mdb-ripple-color="dark">
-                                    <img src="./images/icon/cake.png">
-                                </button>
-                                <div class="text-dark fw-bold">Bánh ngọt</div>
-                            </a>
-                        </div>
-                    </div>
+        <div class="">
+            <nav class="row gy-3 text-center">
+                <div class="col-md-2 col-4 " th:each="c : ${categories}" th:object="${c}">
+                    <a th:href="@{/category/{categoryCode} (categoryCode=*{code})}"
+                       class=" d-flex flex-column justify-content-center">
+                        <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1">
+                            <img th:src="@{/images/{imageUrl}(imageUrl=*{imageUrl})}" width="96px">
+                        </button>
+                        <div class="text-dark fw-bold" th:text="*{name}"></div>
+                    </a>
                 </div>
             </nav>
         </div>
     </section>
-
     <!-- category -->
 
     <!-- Products -->
     <section>
-        <div class="container my-5">
+        <div class="my-5">
             <header class="mb-4">
-                <h3>New products</h3>
+                <h3>Sản phẩm HOT</h3>
             </header>
 
             <div class="row">
-                <div class="col-lg-3 col-md-4 col-sm-6 d-flex">
+                <div class="col-lg-3 col-md-4 col-sm-6 d-flex" th:each="p: ${top8Bests}">
                     <div class="card w-100 my-2 shadow-2-strong">
                         <a href="#">
                             <img src="../images/product-1.jpg" class="card-img-top" style="aspect-ratio: 1 / 1">
@@ -128,29 +56,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 d-flex">
-                    <div class="card w-100 my-2 shadow-2-strong">
-                        <a href="#">
-                            <img src="../images/product-1.jpg" class="card-img-top" style="aspect-ratio: 1 / 1">
-                        </a>
-                        <div class="card-body d-flex flex-column">
-                            <a class="text-decoration-none" href="#">
-                                <p class="card-text">Slim sleeve wallet Italian leather - multiple colors</p>
-                            </a>
-                            <span class="d-flex">
-                                <h5 class="">$510.00</h5>
-                                <p class="ms-3 text-decoration-line-through text-secondary">$510.00</p>
-                            </span>
-
-                            <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <a href="#!" class="btn btn-primary shadow-0 me-1">Mua ngay</a>
-                                <a href="#!" class="btn btn-light border icon-hover px-2 pt-2"><i
-                                        class="bi bi-cart fa-lg text-secondary px-1"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
             <div class="text-center mt-2 mb-2">
                 <a href="#" class="btn btn-warning w-25">Xem tất cả <strong>&gt;&gt;</strong></a>
@@ -179,7 +84,7 @@
     <section>
         <div class="container my-5">
             <header class="mb-4">
-                <h3>Recommended</h3>
+                <h3>Sản phẩm mới</h3>
             </header>
 
             <div class="row">
