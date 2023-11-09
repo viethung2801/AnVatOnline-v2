@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -26,4 +27,8 @@ public class CategoryDto {
 
     @NotBlank(message = "Tên không được trống")
     private String name;
+
+    private MultipartFile imageFile;
+
+    private String imageName;
 }

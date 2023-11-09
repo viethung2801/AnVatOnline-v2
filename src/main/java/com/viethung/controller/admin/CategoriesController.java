@@ -50,22 +50,46 @@ public class CategoriesController {
                          BindingResult result,
                          RedirectAttributes redirectAttributes,
                          Model model) {
-        //Khi edit sẽ không check mã trùng
-        if (categoryDto.getId() == null){
-            if (categoryService.existsByCode(categoryDto.getCode())) {
-                result.rejectValue("code", "duplicate", "Mã đã tồn tại");
-            }
+        //check value
+        if (categoryService.existsByCodeAndIdNot(categoryDto.getCode(),categoryDto.getId())) {
+            result.rejectValue("code", "duplicate", "Mã đã tồn tại");
         }
-
+        //check format
         if (result.hasErrors()) {
             model.addAttribute("categoryDto", categoryDto);
             return "/admin/page/category-form";
         }
         //save
-        if (categoryService.save(categoryDto).getId() == null) {
-            redirectAttributes.addFlashAttribute("fail", "Thất bại! Vui lòng thử lại");
+        if (categoryService.handleSave(categoryDto)) {
+            redirectAttributes.addFlashAttribute("success", "Lưu thành công");
         } else {
-            redirectAttributes.addFlashAttribute("success", "Thành công");
+            redirectAttributes.addFlashAttribute("fail", "Thất bại! Vui lòng thử lại");
+        }
+        return "redirect:/admin/categories";
+    }
+
+    @PostMapping("/categories/add")
+    public String onAdd(@Valid @ModelAttribute CategoryDto categoryDto,
+                        BindingResult result,
+                        RedirectAttributes redirectAttributes,
+                        Model model) {
+        //check value
+        if (categoryService.existsByCode(categoryDto.getCode())) {
+            result.rejectValue("code", "duplicate", "Mã đã tồn tại");
+        }
+        if (categoryDto.getImageFile().isEmpty()) {
+            result.rejectValue("imageFile", "invalid", "Bạn chưa chọn ảnh");
+        }
+        //check format
+        if (result.hasErrors()) {
+            model.addAttribute("categoryDto", categoryDto);
+            return "/admin/page/category-form";
+        }
+        //save
+        if (categoryService.handleAdd(categoryDto)) {
+            redirectAttributes.addFlashAttribute("success", "Thêm thành công");
+        } else {
+            redirectAttributes.addFlashAttribute("fail", "Thất bại! Vui lòng thử lại");
         }
         return "redirect:/admin/categories";
     }
@@ -82,9 +106,9 @@ public class CategoriesController {
     public String onDelete(@PathVariable UUID id,
                            RedirectAttributes redirectAttributes) {
         boolean check = categoryService.deleteById(id);
-        if (check){
+        if (check) {
             redirectAttributes.addFlashAttribute("success", "Thành công");
-        }else {
+        } else {
             redirectAttributes.addFlashAttribute("fail", "Thất bại! Vui lòng thử lại");
         }
         return "redirect:/admin/categories";
@@ -95,7 +119,7 @@ public class CategoriesController {
                            @RequestParam Optional<String> keys,
                            Model model) {
         Pageable pageable = PageRequest.of(page.orElse(0), 50);
-        Page<Category> categories = categoryService.search(keys.orElse(""),pageable);
+        Page<Category> categories = categoryService.search(keys.orElse(""), pageable);
 
         model.addAttribute("categories", categories);
         return "/admin/page/categories";

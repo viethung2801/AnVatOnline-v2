@@ -3,11 +3,13 @@ package com.viethung.service;
 import com.viethung.dto.CategoryDto;
 import com.viethung.entity.Category;
 import com.viethung.repository.CategoryRepository;
+import com.viethung.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.rmi.server.ExportException;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +17,9 @@ import java.util.UUID;
 public class CategoryServiceImpl {
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private UploadFileServiceImpl uploadFileService;
 
     public List<Category> findAll() {
         return categoryRepository.findAll();
@@ -28,21 +33,26 @@ public class CategoryServiceImpl {
         return categoryRepository.existsByCode(code);
     }
 
-    public CategoryDto findById(UUID id){
+    public boolean existsByCodeAndIdNot(String code, UUID id) {
+        return categoryRepository.existsByCodeAndIdNot(code, id);
+    }
+
+    public CategoryDto findById(UUID id) {
         Category category = categoryRepository.findById(id).orElse(null);
-        if (category == null){
+        if (category == null) {
             return null;
         }
         CategoryDto categoryDto = CategoryDto.builder().
                 id(category.getId())
                 .code(category.getCode())
                 .name(category.getName())
+                .imageName(category.getImageUrl())
                 .build();
         return categoryDto;
     }
 
     public String generateCategoryCode() {
-        Long number = categoryRepository.count()+1;
+        Long number = categoryRepository.count() + 1;
         String code = "DM0" + number;
         while (true) {
             if (existsByCode(code)) {
@@ -54,28 +64,55 @@ public class CategoryServiceImpl {
         return code;
     }
 
-    public Category save(CategoryDto categoryDto){
-        Category category = Category.builder()
-                .id(categoryDto.getId())
-                .code(categoryDto.getCode())
-                .name(categoryDto.getName())
-                .build();
-        return categoryRepository.save(category);
-    }
-
-    public boolean deleteById(UUID id){
+    public boolean handleSave(CategoryDto categoryDto) {
+        Category category = categoryRepository.findById(categoryDto.getId()).get();
         try {
-            categoryRepository.deleteById(id);
+            category.setCode(categoryDto.getCode());
+            category.setName(categoryDto.getName());
+            if (!categoryDto.getImageFile().isEmpty()) {
+                category.setImageUrl(uploadFileService.handleUpload(categoryDto.getImageFile()));
+            }
+
+            categoryRepository.save(category);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public Page<Category> search(String keys,Pageable pageable){
-        keys = "%"+keys+"%";
-        Page<Category> categories = categoryRepository.searchByKeys(keys,pageable);
+    public boolean handleAdd(CategoryDto categoryDto) {
+        Category category = Category.builder().build();
+        try {
+            category.setCode(categoryDto.getCode());
+            category.setName(categoryDto.getName());
+            category.setImageUrl(uploadFileService.handleUpload(categoryDto.getImageFile()));
+
+            categoryRepository.save(category);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteById(UUID id) {
+        try {
+            Category category = categoryRepository.findById(id).get();
+            category.getProducts().forEach(product -> {
+                product.setCategory(null);
+            });
+            categoryRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Page<Category> search(String keys, Pageable pageable) {
+        keys = "%" + keys + "%";
+        Page<Category> categories = categoryRepository.searchByKeys(keys, pageable);
         return categories;
     }
 }

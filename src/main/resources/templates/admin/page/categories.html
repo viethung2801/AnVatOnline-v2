@@ -97,6 +97,7 @@
                                         <thead>
                                         <tr>
                                             <th>#</th>
+                                            <th>Ảnh</th>
                                             <th>Mã Danh mục</th>
                                             <th>Tên Danh mục</th>
                                             <th>Action</th>
@@ -105,6 +106,9 @@
                                         <tbody>
                                         <tr th:each="c,i:${categories}">
                                             <td th:text="${i.index +1 }"></td>
+                                            <td >
+                                                <img th:src="@{/images/{fileName}(fileName=${c.imageUrl})}" width="100px">
+                                            </td>
                                             <td th:text="${c.code }"></td>
                                             <td th:text="${c.name }"></td>
                                             <td>

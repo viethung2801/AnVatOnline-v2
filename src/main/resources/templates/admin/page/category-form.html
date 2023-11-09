@@ -32,8 +32,29 @@
                 <!--                <h5 class="card-title">Multi Columns Form</h5>-->
 
                 <!-- Multi Columns Form -->
-                <form class="row g-3" action="/admin/categories/save" th:object="${categoryDto}">
-                    <input hidden="hidden" type="text" class="form-control" id="id" th:field="*{id}"/>
+                <form class="row g-3"
+                      action="/admin/categories/save" th:object="${categoryDto}"
+                      enctype="multipart/form-data"
+                >
+                    <div>
+                        <img th:src="@{/images/{url}(url=${categoryDto.imageName ?: ''})}" id="imagePreview"
+                             alt="Ảnh xem trước"
+                             style="max-width: 150px; max-height: 150px;"/>
+                    </div>
+
+                    <div class="col-md-12 row">
+                        <input type="file"
+                               accept="image/*"
+                               class="form-control"
+                               id="imageUrl"
+                               th:field="*{imageFile}"
+                               onchange="displayImage(this)"
+                        />
+                        <label class="errors" th:errors="*{imageFile}"></label>
+                    </div>
+                    <th:block th:if="*{id != null}">
+                        <input hidden="hidden" type="text" class="form-control" id="id" th:field="*{id}"/>
+                    </th:block>
                     <div class="col-md-12">
                         <label for="code" class="form-label">Mã danh mục:</label>
                         <input type="text" class="form-control" id="code" th:field="*{code}"/>
@@ -45,25 +66,38 @@
                         <label class="errors" th:errors="*{name}"></label>
                     </div>
                     <div class="">
-                        <button type="submit"
-                                class="btn btn-success"
-                                th:formaction="'/admin/categories/save'"
-                                th:formmethod="post">
-                            Lưu
-                        </button>
-                        <a class="btn btn-danger"
-                           th:href="@{/admin/categories/delete/{id}(id=${categoryDto.id})}"
-                           th:hidden="${categoryDto.id == null ? true: false}"
-                           onclick="return confirm('Bạn có chắc muốn xóa Danh mục này không ?')"
-                        >
-                            Xóa
-                        </a>
+                        <th:block th:if="*{id == null}">
+                            <button type="submit"
+                                    class="btn btn-success"
+                                    th:formaction="'/admin/categories/add'"
+                                    th:formmethod="post">
+                                Thêm
+                            </button>
+                        </th:block>
+                        <th:block th:if="*{id != null}">
+                            <button type="submit"
+                                    class="btn btn-success"
+                                    th:formaction="'/admin/categories/save'"
+                                    th:formmethod="post">
+                                Lưu
+                            </button>
+                        </th:block>
+                        <th:block th:if="*{id != null}">
+                            <a class="btn btn-danger"
+                               th:href="@{/admin/categories/delete/{id}(id=${categoryDto.id})}"
+                               onclick="return confirm('Bạn có chắc muốn xóa Danh mục này không ?')"
+                            >
+                                Xóa
+                            </a>
+                        </th:block>
+
                     </div>
                 </form>
                 <!-- End Multi Columns Form -->
             </div>
         </div>
     </section>
+    <script src="/js/previewImage.js"></script>
 </main>
 
 </body>

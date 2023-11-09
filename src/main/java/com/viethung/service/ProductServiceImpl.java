@@ -47,9 +47,9 @@ public class ProductServiceImpl {
         return new PageImpl<ProductListDto>(productListDtos, pageable, total);
     }
 
-    public Page<ProductListDto> searchProducts(String keys,Pageable pageable) {
-        keys = "%"+keys+"%";
-        Page<Product> products = productRepository.searchAllByCodeLikeOrNameLike(keys,keys,pageable);
+    public Page<ProductListDto> searchProducts(String keys, Pageable pageable) {
+        keys = "%" + keys + "%";
+        Page<Product> products = productRepository.searchAllByCodeLikeOrNameLike(keys, keys, pageable);
         List<ProductListDto> productListDtos = new ArrayList<>();
         long total = products.getSize();
         products.forEach(product -> {
@@ -68,11 +68,11 @@ public class ProductServiceImpl {
         return mapProductToProductFormDto(product);
     }
 
-    public boolean deleteById(UUID id){
+    public boolean deleteById(UUID id) {
         try {
             productRepository.deleteById(id);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -189,7 +189,7 @@ public class ProductServiceImpl {
         productListDto.setImageUrl(product.getProductImages().get(0).getUrl());
         productListDto.setCode(product.getCode());
         productListDto.setName(product.getName());
-        productListDto.setCategoryName(product.getCategory().getName());
+        productListDto.setCategoryName(product.getCategory() == null ? "" : product.getCategory().getName());
         productListDto.setStatus(product.getStatus() == EProductStatus.ACTIVE ? 1 : 0);
         productListDto.setPrice(product.getPrice().toString());
         productListDto.setCreatedDate(product.getCreatedDate());
@@ -208,7 +208,7 @@ public class ProductServiceImpl {
                         product.getProductImages().get(1).getUrl(),
                         product.getProductImages().get(2).getUrl()
                 ))
-                .categoryId(product.getCategory().getId().toString())
+                .categoryId(product.getCategory() == null ? "" : product.getCategory().getId().toString())
                 .price(product.getPrice())
                 .cost(product.getCost())
                 .status(product.getStatus() == EProductStatus.ACTIVE ? 1 : 0)

@@ -124,7 +124,7 @@
                                             <td>
                                                 <a href="#" th:text="${p.name}"></a>
                                             </td>
-                                            <td th:text="${p.categoryName}"></td>
+                                            <td th:text="${p.categoryName ?: ''}"></td>
                                             <td >
                                                 <th:block th:if="${p.status == 1}">
                                                     <span class="badge bg-primary">Đang bán</span>

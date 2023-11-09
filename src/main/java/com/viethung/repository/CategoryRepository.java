@@ -14,4 +14,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
     @Query("select c from Category c where c.code like :keys or c.name like :keys")
     Page<Category> searchByKeys(String keys, Pageable pageable);
+
+    boolean existsByCodeAndIdNot(String code, UUID id);
 }
