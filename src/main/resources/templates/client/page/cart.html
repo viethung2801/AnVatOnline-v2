@@ -11,99 +11,134 @@
 
     <!-- cart + summary -->
     <section class="bg-light my-5">
-        <div class="container">
+        <div class="">
+
+            <th:block>
+                <th:block th:if="${fail}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        [[${fail}]]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                </th:block>
+                <th:block th:if="${success}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        [[${success}]]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                </th:block>
+
+                <th:block th:if="${param.fail}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        [[${param.fail}]]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                </th:block>
+                <th:block th:if="${param.success}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        [[${param.success}]]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                </th:block>
+            </th:block>
+
             <div class="row">
                 <!-- cart -->
                 <div class="col-lg-9">
                     <div class="card border shadow-0">
                         <div class="m-4">
-                            <h4 class="card-title mb-4">Your shopping cart</h4>
-                            <div class="row gy-3 mb-4">
-                                <div class="col-lg-5">
-                                    <div class="me-lg-5">
-                                        <div class="d-flex">
-                                            <img src="./images/product-1.jpg" class="border rounded me-3"
-                                                 style="width: 96px; height: 96px;">
-                                            <div class="">
-                                                <a href="#" class="nav-link">Winter jacket for men and lady</a>
-                                                <p class="text-muted">Yellow, Jeans</p>
+                            <h4 class="card-title mb-4">Giỏ hàng</h4>
+                            <th:block th:if="${cartDetailDtos.isEmpty()}">
+                                <h3>Bạn chưa có sản phẩm nào</h3>
+                            </th:block>
+                            <th:block th:if="${not cartDetailDtos.isEmpty()}">
+                                <div class="row gy-3 mb-4" th:each="cart :${cartDetailDtos}">
+                                    <div class="col-lg-5">
+                                        <div class="me-lg-5">
+                                            <div class="d-flex">
+                                                <img th:src="@{/images/{imageName} (imageName=${cart.imageName})}"
+                                                     class="border rounded me-3"
+                                                     style="width: 96px; height: 96px;">
+                                                <div class="">
+                                                    <p class=""
+                                                       th:text="${cart.productName.length() > 50 ?cart.productName.substring(0,50)+' ...': cart.productName}"></p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
-                                    <div class="">
-                                        <div class="d-flex">
-                                            <button class="btn p-0">
-                                                <i class="bi bi-caret-left"></i>
-                                            </button>
-                                            <input class="form-control border-0shadow-0" type="text" value="100000000">
-                                            <button class="btn p-0">
-                                                <i class="bi bi-caret-right"></i>
-                                            </button>
+                                    <div class="col-lg-4 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                                        <div class="">
+                                            <div class="d-flex align-items-center row">
+                                                <button class="btn col-2 ps-0 p-0"
+                                                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                                                    <i class="bi bi-caret-left"></i>
+                                                </button>
+                                                <input type="number" class="col-5 " name="quantity"
+                                                       th:value="${cart.quantity.intValue()}" min="1" step="1">
+                                                <button class="btn col-2 p-0"
+                                                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                                    <i class="bi bi-caret-right"></i>
+                                                </button>
+                                            </div>
                                         </div>
-
+                                        <div class="">
+                                            <text class="h6"
+                                                  th:text="${#numbers.formatDecimal(cart.price.intValue() * cart.quantity,3,'COMMA',0,'POINT') +' đ'}"></text>
+                                            <br>
+                                            <small class="text-muted text-nowrap"> [[${(cart.price.intValue() < 1000) ?
+                                                cart.price : #numbers.formatDecimal(cart.price,3,'COMMA',0,'POINT') +'
+                                                đ'}]] / 1</small>
+                                        </div>
                                     </div>
-                                    <div class="">
-                                        <text class="h6">$1156.00</text>
-                                        <br>
-                                        <small class="text-muted text-nowrap"> $460.00 / per item </small>
+                                    <div class="col-lg col-sm-4 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                                        <div class="float-md-end">
+                                            <a th:href="@{/cart-detail/update}"
+                                               class="btn btn-light border px-2 icon-hover-primary">
+                                                Cập nhật
+                                            </a>
+                                            <a th:href="@{/cart-detail/delete}"
+                                               class="btn btn-light border text-danger icon-hover-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-lg col-sm-4 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
-                                    <div class="float-md-end">
-                                        <a href="#!" class="btn btn-light border px-2 icon-hover-primary">
-                                            Update
-                                        </a>
-                                        <a href="#" class="btn btn-light border text-danger icon-hover-danger">
-                                            Remove</a>
-                                    </div>
-                                </div>
-                            </div>
+                            </th:block>
 
                         </div>
 
-                        <div class="border-top pt-4 mx-4 mb-4">
-                            <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
-                            <p class="text-muted">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                                exercitation ullamco laboris nisi ut
-                                aliquip
-                            </p>
-                        </div>
                     </div>
                 </div>
                 <!-- cart -->
                 <!-- summary -->
-                <div class="col-lg-3">
-                    <div class="card shadow-0 border">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-2">Total price:</p>
-                                <p class="mb-2">$329.00</p>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-2">Discount:</p>
-                                <p class="mb-2 text-success">-$60.00</p>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-2">TAX:</p>
-                                <p class="mb-2">$14.00</p>
-                            </div>
-                            <hr>
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-2">Total price:</p>
-                                <p class="mb-2 fw-bold">$283.00</p>
-                            </div>
+                <th:block th:if="${not cartDetailDtos.isEmpty()}">
+                    <div class="col-lg-3">
+                        <div class="card shadow-0 border">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-2">Tổng tiền:</p>
+                                    <p class="mb-2"
+                                       th:text="${#numbers.formatDecimal(totalPrice,3,'COMMA',0,'POINT') +' đ'}"></p>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-2">Tổng tiền:</p>
+                                    <p class="mb-2 fw-bold"
+                                       th:text="${#numbers.formatDecimal(totalPrice,3,'COMMA',0,'POINT') +' đ'}"></p>
+                                </div>
 
-                            <div class="mt-3">
-                                <a href="#" class="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
-                                <a href="#" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+                                <div class="mt-3">
+                                    <a href="/checkout" class="btn btn-success w-100 shadow-0 mb-2"> Đặt hàng </a>
+                                    <a href="/" class="btn btn-light w-100 border mt-2"> Tiếp tục mua sắm </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </th:block>
+
                 <!-- summary -->
             </div>
         </div>
@@ -112,75 +147,37 @@
     <section>
         <div class="container my-5">
             <header class="mb-4">
-                <h3>Recommended items</h3>
+                <h3>Gợi ý</h3>
             </header>
 
             <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-12 d-flex">
+                <div class="col-lg-3 col-md-4 col-sm-6 d-flex" th:each="p: ${productCardDtos}" th:object="${p}">
                     <div class="card w-100 my-2 shadow-2-strong">
-                        <a href="#">
-                            <img src="../images/product-1.jpg" class="card-img-top" style="aspect-ratio: 1 / 1">
+                        <a th:href="@{/product-detail/{id}(id=*{id})}">
+                            <img th:src="@{/images/{image}(image=*{imageName})}" class="card-img-top"
+                                 style="aspect-ratio: 1 / 1" alt="">
                         </a>
                         <div class="card-body d-flex flex-column">
-                            <a class="text-decoration-none" href="#">
-                                <p class="card-text">Slim sleeve wallet Italian leather - multiple colors</p>
+                            <a class="text-decoration-none" th:href="@{/product-detail/{id}(id=*{id})}">
+                                <p class="card-text" th:text="*{name}"></p>
                             </a>
                             <span class="d-flex">
-                                <h5 class="">$510.00</h5>
-                                <p class="ms-3 text-decoration-line-through text-secondary">$510.00</p>
+                                <h5 class=""
+                                    th:text="${(p.price.intValue() < 1000) ? p.price : #numbers.formatDecimal(p.price,3,'COMMA',0,'POINT')}"></h5>
                             </span>
 
                             <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <a href="#!" class="btn btn-primary shadow-0 me-1">Mua ngay</a>
-                                <a href="#!" class="btn btn-light border icon-hover px-2 pt-2"><i
-                                        class="bi bi-heart fa-lg text-secondary px-1"></i></a>
+                                <a th:href="@{/add-cart/{productId}(productId = ${p.id})}"
+                                   class="btn btn-primary shadow-0 me-1">
+                                    <i class="bi bi-cart"></i>
+                                    Thêm giỏ hàng
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-12 d-flex">
-                    <div class="card w-100 my-2 shadow-2-strong">
-                        <a href="#">
-                            <img src="../images/product-1.jpg" class="card-img-top" style="aspect-ratio: 1 / 1">
-                        </a>
-                        <div class="card-body d-flex flex-column">
-                            <a class="text-decoration-none" href="#">
-                                <p class="card-text">Slim sleeve wallet Italian leather - multiple colors</p>
-                            </a>
-                            <span class="d-flex">
-                                <h5 class="">$510.00</h5>
-                                <p class="ms-3 text-decoration-line-through text-secondary">$510.00</p>
-                            </span>
-
-                            <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <a href="#!" class="btn btn-primary shadow-0 me-1">Mua ngay</a>
-                                <a href="#!" class="btn btn-light border icon-hover px-2 pt-2"><i
-                                        class="bi bi-heart fa-lg text-secondary px-1"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-12 d-flex">
-                    <div class="card w-100 my-2 shadow-2-strong">
-                        <a href="#">
-                            <img src="../images/product-1.jpg" class="card-img-top" style="aspect-ratio: 1 / 1">
-                        </a>
-                        <div class="card-body d-flex flex-column">
-                            <a class="text-decoration-none" href="#">
-                                <p class="card-text">Slim sleeve wallet Italian leather - multiple colors</p>
-                            </a>
-                            <span class="d-flex">
-                                <h5 class="">$510.00</h5>
-                                <p class="ms-3 text-decoration-line-through text-secondary">$510.00</p>
-                            </span>
-
-                            <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <a href="#!" class="btn btn-primary shadow-0 me-1">Mua ngay</a>
-                                <a href="#!" class="btn btn-light border icon-hover px-2 pt-2"><i
-                                        class="bi bi-heart fa-lg text-secondary px-1"></i></a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="text-center mt-2 mb-2">
+                    <a href="/product-all" class="btn btn-warning w-25">Xem tất cả <strong>&gt;&gt;</strong></a>
                 </div>
             </div>
         </div>

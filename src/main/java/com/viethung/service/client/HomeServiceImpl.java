@@ -26,8 +26,8 @@ public class HomeServiceImpl {
         return categoryRepository.findAll();
     }
 
-    public List<ProductCardDto> findTop8BestSeller() {
-        Pageable pageable = PageRequest.of(0, 8);
+    public List<ProductCardDto> findTop12BestSeller() {
+        Pageable pageable = PageRequest.of(0, 12);
         List<Product> products = productRepository.findTop8BestSeller(pageable);
         List<ProductCardDto> productCardDtos = new ArrayList<>();
         products.forEach(product -> {

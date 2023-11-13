@@ -20,12 +20,11 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model) {
         List<Category> categories = homeService.findAll();
-        List<ProductCardDto> top8Bests = homeService.findTop8BestSeller();
+        List<ProductCardDto> top12Bests = homeService.findTop12BestSeller();
         List<ProductCardDto> top8News = homeService.findTop8ProductNew();
-        System.out.println(top8News);
-        System.out.println(top8Bests);
+
         model.addAttribute("categories", categories);
-        model.addAttribute("top8Bests", top8Bests);
+        model.addAttribute("top12Bests", top12Bests);
         model.addAttribute("top8News", top8News);
         return "client/page/home";
     }

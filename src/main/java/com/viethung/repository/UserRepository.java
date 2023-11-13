@@ -38,4 +38,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "or u.phoneNumber like :keys")
     Page<User> searchByKeys(String keys, Pageable pageable);
 
+    User findUserById(UUID id);
 }

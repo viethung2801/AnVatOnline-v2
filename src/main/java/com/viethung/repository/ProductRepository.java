@@ -1,11 +1,14 @@
 package com.viethung.repository;
 
+import com.viethung.entity.Category;
 import com.viethung.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,4 +26,10 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("select distinct p from Product p order by p.createdDate")
     List<Product> findTop8BestSeller(Pageable pageable);
 
+    List<Product> findAllByCategory(Category category);
+
+    Page<Product> findAllByCategoryInAndPriceBetween(Collection<Category> category,BigDecimal price, BigDecimal price2, Pageable pageable);
+    Page<Product> findAllByPriceBetween(BigDecimal price, BigDecimal price2, Pageable pageable);
+
+    Product findProductById(UUID id);
 }

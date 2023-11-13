@@ -7,13 +7,13 @@
 
 
 <body>
-<main id="main">
+<main>
     <!-- category -->
     <section>
         <div class="">
             <nav class="row gy-3 text-center">
                 <div class="col-md-2 col-4 " th:each="c : ${categories}" th:object="${c}">
-                    <a th:href="@{/category/{categoryCode} (categoryCode=*{code})}"
+                    <a th:href="@{/product-all (category=*{code})}"
                        class=" d-flex flex-column justify-content-center">
                         <button type="button" class="btn btn-outline-secondary mx-auto p-1 m-1">
                             <img th:src="@{/images/{imageUrl}(imageUrl=*{imageUrl})}" width="96px">
@@ -34,31 +34,33 @@
             </header>
 
             <div class="row">
-                <div class="col-lg-3 col-md-4 col-sm-6 d-flex" th:each="p: ${top8Bests}">
+                <div class="col-lg-3 col-md-4 col-sm-6 d-flex" th:each="p: ${top12Bests}" th:object="${p}">
                     <div class="card w-100 my-2 shadow-2-strong">
-                        <a href="#">
-                            <img src="../images/product-1.jpg" class="card-img-top" style="aspect-ratio: 1 / 1">
+                        <a th:href="@{/product-detail/{id}(id=*{id})}">
+                            <img th:src="@{/images/{image}(image=*{imageName})}" class="card-img-top"
+                                 style="aspect-ratio: 1 / 1" alt="">
                         </a>
                         <div class="card-body d-flex flex-column">
-                            <a class="text-decoration-none" href="#">
-                                <p class="card-text">Slim sleeve wallet Italian leather - multiple colors</p>
+                            <a class="text-decoration-none" th:href="@{/product-detail/{id}(id=*{id})}">
+                                <p class="card-text" th:text="*{name}"></p>
                             </a>
                             <span class="d-flex">
-                                <h5 class="">$510.00</h5>
-                                <p class="ms-3 text-decoration-line-through text-secondary">$510.00</p>
+                                <h5 class=""
+                                    th:text="${(p.price.intValue() < 1000) ? p.price : #numbers.formatDecimal(p.price,3,'COMMA',0,'POINT')}"></h5>
                             </span>
 
                             <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <a href="#!" class="btn btn-primary shadow-0 me-1">Mua ngay</a>
-                                <a href="#!" class="btn btn-light border icon-hover px-2 pt-2"><i
-                                        class="bi bi-cart fa-lg text-secondary px-1"></i></a>
+                                <a th:href="@{/add-cart/{productId}(productId=${p.id})}" class="btn btn-primary shadow-0 me-1">
+                                    <i class="bi bi-cart"></i>
+                                    Thêm giỏ hàng
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="text-center mt-2 mb-2">
-                <a href="#" class="btn btn-warning w-25">Xem tất cả <strong>&gt;&gt;</strong></a>
+                <a href="/product-all" class="btn btn-warning w-25">Xem tất cả <strong>&gt;&gt;</strong></a>
             </div>
         </div>
     </section>
@@ -70,8 +72,9 @@
             <div class="card p-4 bg-primary">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h4 class="mb-0 text-white">Best products and brands in store</h4>
-                        <p class="mb-0 text-white-50">Trendy products and text to build on the card title</p>
+                        <h4 class="mb-0 text-white">Ăn vặt online chúc quý khách ngon miệng !</h4>
+                        <p class="mb-0 text-white-50">Đói thì phải ăn, khát thì phải uống, các nhà khoa học gọi đó là
+                            định luật bảo toàn tính mạng.</p>
                     </div>
                     <div class="col-auto"><a class="btn btn-white text-primary shadow-0" href="#">Discover</a></div>
                 </div>
@@ -82,37 +85,39 @@
 
     <!-- Recommended -->
     <section>
-        <div class="container my-5">
+        <div class="my-5">
             <header class="mb-4">
-                <h3>Sản phẩm mới</h3>
+                <h3>Sản phẩm HOT</h3>
             </header>
 
             <div class="row">
-                <div class="col-lg-3 col-md-4 col-sm-6 d-flex">
+                <div class="col-lg-3 col-md-4 col-sm-6 d-flex" th:each="p: ${top8News}" th:object="${p}">
                     <div class="card w-100 my-2 shadow-2-strong">
-                        <a href="#">
-                            <img src="../images/product-1.jpg" class="card-img-top" style="aspect-ratio: 1 / 1">
+                        <a th:href="@{/product-detail/{id}(id=*{id})}">
+                            <img th:src="@{/images/{image}(image=*{imageName})}" class="card-img-top"
+                                 style="aspect-ratio: 1 / 1" alt="">
                         </a>
                         <div class="card-body d-flex flex-column">
-                            <a class="text-decoration-none" href="#">
-                                <p class="card-text">Slim sleeve wallet Italian leather - multiple colors</p>
+                            <a class="text-decoration-none" th:href="@{/product-detail/{id}(id=*{id})}">
+                                <p class="card-text" th:text="*{name}"></p>
                             </a>
                             <span class="d-flex">
-                                <h5 class="">$510.00</h5>
-                                <p class="ms-3 text-decoration-line-through text-secondary">$510.00</p>
+                                <h5 class=""
+                                    th:text="${(p.price.intValue() < 1000) ? p.price : #numbers.formatDecimal(p.price,3,'COMMA',0,'POINT')}"></h5>
                             </span>
 
                             <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <a href="#!" class="btn btn-primary shadow-0 me-1">Mua ngay</a>
-                                <a href="#!" class="btn btn-light border icon-hover px-2 pt-2"><i
-                                        class="bi bi-cart fa-lg text-secondary px-1"></i></a>
+                                <a th:href="@{/add-cart/{productId}(productId=${p.id})}" class="btn btn-primary shadow-0 me-1">
+                                    <i class="bi bi-cart"></i>
+                                    Thêm giỏ hàng
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="text-center mt-2 mb-2">
-                <a href="#" class="btn btn-warning w-25">Xem tất cả <strong>&gt;&gt;</strong></a>
+                <a href="/product-all" class="btn btn-warning w-25">Xem tất cả <strong>&gt;&gt;</strong></a>
             </div>
         </div>
     </section>
