@@ -14,11 +14,12 @@
         <div class="container">
             <div class="row">
                 <div class="p-3 m-2">
-                    <form action="/category/search" method="get">
+                    <form action="/product-all/search" method="get">
                         <div class="input-group input-group-lg">
                             <span class="input-group-text bi-search"></span>
-                            <input name="keys" type="text" class="form-control" placeholder="Tìm món ...">
-                            <button type="submit" class="btn btn-primary input-group-text">Search</button>
+                            <input name="keys" type="text" class="form-control" placeholder="Tìm món ..."
+                                   th:value="${param.keys?:''}">
+                            <button type="submit" class="btn btn-primary input-group-text">Tìm</button>
                         </div>
                     </form>
                 </div>
@@ -99,57 +100,67 @@
                     <!-- content -->
                     <div class="col-lg-9">
                         <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
-                            <strong class="d-block py-2" >[[${productCardDtos.totalElements}]] Sản phẩm</strong>
+                            <strong class="d-block py-2">[[${productCardDtos.totalElements}]] Sản phẩm</strong>
                             <div class="ms-auto">
-                                <select class="form-select d-inline-block w-auto border pt-1">
+                                <select class="form-select d-inline-block w-auto border pt-1"
+                                        onchange="onFilter(event.target.value)" id="sortBy">
+                                    <option value="-1">Mặc định</option>
                                     <option value="0">A-Z</option>
                                     <option value="1">Z-A</option>
-                                    <option value="2">Giá thấp - cao</option>
-                                    <option value="3">Giá cao - thấp</option>
+                                    <option value="2">Giá tăng dần</option>
+                                    <option value="3">Giá giảm dần</option>
                                 </select>
                             </div>
                         </header>
                         <!--Products-->
-                        <div class="row">
+                        <div>
                             <th:block th:if="${productCardDtos != null}">
-                                <div class="col-lg-4 col-md-6 col-sm-12 d-flex" th:each="p: ${productCardDtos}"
-                                     th:object="${p}">
-                                    <div class="card w-100 my-2 shadow-2-strong">
-                                        <a th:href="@{/product-detail/{id}(id=*{id})}">
-                                            <img th:src="@{/images/{image}(image=*{imageName})}" class="card-img-top"
-                                                 style="aspect-ratio: 1 / 1" alt="">
-                                        </a>
-                                        <div class="card-body d-flex flex-column">
-                                            <a class="text-decoration-none" th:href="@{/product-detail/{id}(id=*{id})}">
-                                                <p class="card-text" th:text="*{name}"></p>
-                                            </a>
-                                            <span class="d-flex">
-                                            <h5 th:text="${(p.price.intValue() < 1000) ? p.price : #numbers.formatDecimal(p.price,3,'COMMA',0,'POINT')}"></h5>
-                                        </span>
+                                <div class="row" id="productAll">
+                                    <div class="col-lg-4 col-md-6 col-sm-12 d-flex product-card"
+                                         th:each="p: ${productCardDtos}"
+                                         th:object="${p}">
 
-                                            <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                                <a th:href="@{/add-cart/{productId}(productId = ${p.id})}" class="btn btn-primary shadow-0 me-1">
-                                                    <i class="bi bi-cart"></i>
-                                                    Thêm giỏ hàng
+                                        <div class="card w-100 my-2 shadow-2-strong">
+                                            <a th:href="@{/product-detail/{id}(id=*{id})}">
+                                                <img th:src="@{/images/{image}(image=*{imageName})}"
+                                                     class="card-img-top"
+                                                     style="aspect-ratio: 1 / 1" alt="">
+                                            </a>
+                                            <div class="card-body d-flex flex-column">
+                                                <a class="text-decoration-none"
+                                                   th:href="@{/product-detail/{id}(id=*{id})}">
+                                                    <p class="card-text" th:text="*{name}"></p>
                                                 </a>
+                                                <div class="h5"
+                                                     th:text="${(p.price.intValue() < 1000) ? p.price : #numbers.formatDecimal(p.price,3,'COMMA',0,'POINT')}">
+                                                </div>
+                                                <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+                                                    <a th:href="@{/add-cart/{productId}(productId = ${p.id})}"
+                                                       class="btn btn-primary shadow-0 me-1">
+                                                        <i class="bi bi-cart"></i>
+                                                        Thêm giỏ hàng
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <hr>
+                                <!-- Pagination -->
+                                <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
+                                    <ul class="pagination">
+                                        <li class="page-item"
+                                            th:each="p : ${#numbers.sequence(0,productCardDtos.totalPages - 1)}">
+                                            <a class="page-link"
+                                               th:href="@{/product-all(page=${p},category=${param.category?:''},priceMin=${param.priceMin?:''},priceMax=${param.priceMax?:''})}"
+                                               th:text="${p +1}"></a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                <!-- Pagination -->
                             </th:block>
 
-                            <hr>
 
-                            <!-- Pagination -->
-                            <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
-                                <ul class="pagination">
-                                    <li class="page-item" th:each="p : ${#numbers.sequence(0,productCardDtos.totalPages - 1)}">
-                                        <a class="page-link"
-                                           th:href="@{/product-all(page=${p},category=${param.category?:''},priceMin=${param.priceMin?:''},priceMax=${param.priceMax?:''})}" th:text="${p +1}"></a>
-                                    </li>
-                                </ul>
-                            </nav>
-                            <!-- Pagination -->
                         </div>
                     </div>
                 </form>
@@ -159,6 +170,7 @@
     </section>
     <!-- sidebar + content -->
     <script src="/js/categories-product-all.js"></script>
+    <script src="/js/product-all-filter.js"></script>
 </main>
 </body>
 

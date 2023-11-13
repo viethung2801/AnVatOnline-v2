@@ -55,7 +55,7 @@
                                 <h3>Bạn chưa có sản phẩm nào</h3>
                             </th:block>
                             <th:block th:if="${not cartDetailDtos.isEmpty()}">
-                                <div class="row gy-3 mb-4" th:each="cart :${cartDetailDtos}">
+                                <form class="row gy-3 mb-4" th:each="cart :${cartDetailDtos}">
                                     <div class="col-lg-5">
                                         <div class="me-lg-5">
                                             <div class="d-flex">
@@ -72,13 +72,13 @@
                                     <div class="col-lg-4 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
                                         <div class="">
                                             <div class="d-flex align-items-center row">
-                                                <button class="btn col-2 ps-0 p-0"
+                                                <button type="button" class="btn col-2 ps-0 p-0"
                                                         onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
                                                     <i class="bi bi-caret-left"></i>
                                                 </button>
-                                                <input type="number" class="col-5 " name="quantity"
+                                                <input type="number" class="col-5 " name="qty"
                                                        th:value="${cart.quantity.intValue()}" min="1" step="1">
-                                                <button class="btn col-2 p-0"
+                                                <button type="button" class="btn col-2 p-0"
                                                         onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
                                                     <i class="bi bi-caret-right"></i>
                                                 </button>
@@ -95,17 +95,18 @@
                                     </div>
                                     <div class="col-lg col-sm-4 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
                                         <div class="float-md-end">
-                                            <a th:href="@{/cart-detail/update}"
+                                            <button th:formaction="'/update-cart/'+${cart.id}" th:formmethod="get"
                                                class="btn btn-light border px-2 icon-hover-primary">
                                                 Cập nhật
-                                            </a>
-                                            <a th:href="@{/cart-detail/delete}"
+                                            </button>
+                                            <a th:href="@{/delete-cart/{cartId}(cartId = ${cart.id})}"
+                                               onclick="return confirm('Xóa sản phẩm này ?')"
                                                class="btn btn-light border text-danger icon-hover-danger">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
                             </th:block>
 
                         </div>

@@ -58,6 +58,28 @@ public class CartServiceImpl {
         return cartDetailDtos;
     }
 
+    public MessageDto updateCartDetail(UUID cartDetailId,int quantity) {
+        try {
+            CartDetail cartDetail = cartDetailRepository.findById(cartDetailId).get();
+            cartDetail.setQuantity(quantity);
+            cartDetailRepository.save(cartDetail);
+            return MessageDto.builder().status("success").message("Cập nhật thành công").build();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return MessageDto.builder().status("fail").message("Đã xảy ra lỗi! Vui lòng thử lại").build();
+    }
+
+    public MessageDto deleteCartDetail(UUID cartDetailId) {
+        try {
+            cartDetailRepository.deleteById(cartDetailId);
+            return MessageDto.builder().status("success").message("Xóa thành công").build();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return MessageDto.builder().status("fail").message("Đã xảy ra lỗi! Vui lòng thử lại").build();
+    }
+
     public MessageDto addCartAnonymousUser(UUID productId,
                                            Integer qty,
                                            HttpServletRequest request,
@@ -68,14 +90,13 @@ public class CartServiceImpl {
         if (getCookie("cartId", cookies) == null) {
             // chưa có => tạo mới 1 cookie
             cartId = newCartIdCookie(response);
-            System.out.println("Tạo mới cookie");
         } else {
             // có rồi => lấy cart by id
-            cartId = UUID.fromString(getCookie("cartId", cookies).getValue());
-            System.out.println("lấy cart by id");
+            Cookie cookie = getCookie("cartId", cookies);
+            System.out.println("MaxAge: " + cookie.getMaxAge());
+            cartId = UUID.fromString(cookie.getValue());
         }
         Cart cart = cartRepository.findCartById(cartId);
-//        System.out.println(cart.toString());
         try {
             CartDetail cartDetail = updateOrCreateCartDetail(cart, productId, qty);
             cartDetailRepository.save(cartDetail);
@@ -111,7 +132,7 @@ public class CartServiceImpl {
 
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
-        cookie.setMaxAge(30 * 24 * 60 * 60);//30 days
+        cookie.setMaxAge(30 * 24 * 60 * 60);//30 days = 30 * 24 * 60 * 60 or -1 = session
         System.out.println(value);
         response.addCookie(cookie);
 
@@ -155,7 +176,7 @@ public class CartServiceImpl {
 
     public CartDetail updateOrCreateCartDetail(Cart cart, UUID productId, Integer qty) {
 
-        if (cart.getCartDetails() != null){
+        if (cart.getCartDetails() != null) {
             for (CartDetail cartDetailTemp : cart.getCartDetails()) {
                 if (cartDetailTemp.getProduct().getId().equals(productId)) {
                     cartDetailTemp.setQuantity(cartDetailTemp.getQuantity() + qty);
@@ -176,13 +197,13 @@ public class CartServiceImpl {
     }
 
     public MessageDto addCart(UUID userId, UUID productId, Integer qty) {
-        if (userId == null || productId == null){
+        if (userId == null || productId == null) {
             return MessageDto.builder().message("fail").message("Có lỗi xảy ra! Vui lòng thử lại").build();
         }
         // get cart
         User user = userRepository.findUserById(userId);
         Cart cart = cartRepository.findByUser(user);
-        if (cart == null){
+        if (cart == null) {
             cart = Cart.builder()
                     .code(generateCartCode())
                     .user(user)

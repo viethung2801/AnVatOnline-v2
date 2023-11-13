@@ -77,6 +77,22 @@ public class CartController {
         redirectAttributes.addFlashAttribute(message.getStatus(),message.getMessage());
         return "redirect:/my-cart";
     }
+    @GetMapping("/update-cart/{cartDetailId}")
+    public String onUpdateCart(@PathVariable Optional<UUID> cartDetailId,
+                            @RequestParam Optional<Integer> qty,
+                            RedirectAttributes redirectAttributes) {
+        MessageDto message = cartService.updateCartDetail(cartDetailId.orElse(null),qty.orElse(1));
+        redirectAttributes.addFlashAttribute(message.getStatus(),message.getMessage());
+        return "redirect:/my-cart";
+    }
+
+    @GetMapping("/delete-cart/{cartDetailId}")
+    public String onDeleteCart(@PathVariable Optional<UUID> cartDetailId,
+                               RedirectAttributes redirectAttributes) {
+        MessageDto message = cartService.deleteCartDetail(cartDetailId.orElse(null));
+        redirectAttributes.addFlashAttribute(message.getStatus(),message.getMessage());
+        return "redirect:/my-cart";
+    }
 
     private float getTotalPrice(List<CartDetailDto> cartDetailDtos) {
         float value = 0;

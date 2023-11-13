@@ -27,15 +27,24 @@ public class ProductAllController {
                               @RequestParam Optional<BigDecimal> priceMin,
                               @RequestParam Optional<BigDecimal> priceMax,
                               Model model) {
-        ;
-        ;
-
         Pageable pageable = PageRequest.of(page.orElse(0), 30);
         Page<ProductCardDto> productCardDtos = productAllService.findAll(
                 category.orElse(null),
                 priceMin.orElse(BigDecimal.valueOf(Long.MIN_VALUE)),
                 priceMax.orElse(BigDecimal.valueOf(Long.MAX_VALUE)),
                 pageable);
+        model.addAttribute("productCardDtos", productCardDtos);
+        return "client/page/product-all";
+    }
+
+    @GetMapping("/product-all/search")
+    public String onSearchByKeys(@RequestParam Optional<Integer> page,
+                                 @RequestParam Optional<String> keys,
+                                 Model model) {
+
+
+        Pageable pageable = PageRequest.of(page.orElse(0), 30);
+        Page<ProductCardDto> productCardDtos = productAllService.findAllByKeys(keys.orElse(""),pageable);
         model.addAttribute("productCardDtos", productCardDtos);
         return "client/page/product-all";
     }

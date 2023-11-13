@@ -47,4 +47,16 @@ public class ProductAllServiceImpl {
         });
         return new PageImpl<>(productCardDtos, pageable, products.getTotalElements());
     }
+
+    public Page<ProductCardDto> findAllByKeys(String keys,
+                                        Pageable pageable) {
+        keys = "%"+keys+"%";
+
+        Page<Product> products = productRepository.findAllByNameLike(keys,pageable);
+        List<ProductCardDto> productCardDtos = new ArrayList<>();
+        products.forEach(product -> {
+            productCardDtos.add(homeService.mapProductToProductCardDto(product));
+        });
+        return new PageImpl<>(productCardDtos, pageable, products.getTotalElements());
+    }
 }

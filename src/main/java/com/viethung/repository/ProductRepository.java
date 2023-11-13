@@ -32,4 +32,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     Page<Product> findAllByPriceBetween(BigDecimal price, BigDecimal price2, Pageable pageable);
 
     Product findProductById(UUID id);
+
+    Page<Product> findAllByNameLike (String name, Pageable pageable);
 }

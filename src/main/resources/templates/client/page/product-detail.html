@@ -82,24 +82,15 @@
            style="color: red"
         ></p>
         <p class="text-sm mb-4" th:text="*{description}">Không có mô tả</p>
-        <div class="row align-items-stretch mb-4">
-            <!--            <div class="col-sm-5 pr-sm-0">-->
-            <!--                <div class="border d-flex align-items-center justify-content-between py-1 px-3 bg-white border-white">-->
-            <!--                    <div class="quantity d-flex">-->
-            <!--                        <button class="dec-btn p-0"><i class="bi bi-caret-left"></i></button>-->
-            <!--                        <input class="form-control border-0 shadow-0 p-0 w-25" type="text" value="1">-->
-            <!--                        <button class="inc-btn p-0"><i class="bi bi-caret-right"></i></button>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </div>-->
+        <form class="row align-items-stretch mb-4">
             <div class="col-sm-4 pr-sm-0">
                 <div class="d-flex align-items-center row">
-                    <button class="btn col-2 ps-0 p-0"
+                    <button type="button" class="btn col-2 ps-0 p-0"
                             onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
                         <i class="bi bi-caret-left"></i>
                     </button>
-                    <input type="number" class="col-5 " name="quantity" value="1" min="1" step="1">
-                    <button class="btn col-2 p-0"
+                    <input type="number" class="col-5 " name="qty" value="1" min="1" step="1">
+                    <button type="button" class="btn col-2 p-0"
                             onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
                         <i class="bi bi-caret-right"></i>
                     </button>
@@ -107,22 +98,22 @@
             </div>
 
             <div class="col-sm-3 pl-sm-0">
-                <a href="/checkout"
+                <button type="submit" th:formmethod="get" th:formaction="'/add-cart/'+${productDetailDto.id}"
                    class="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0">
                     Thêm giỏ hàng
-                </a>
+                </button>
             </div>
             <div class="col-sm-3 pl-sm-0">
-                <a href="/add-cart"
+                <a
                    class="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0">
                     Mua ngay
                 </a>
             </div>
-        </div>
+        </form>
         <ul class="list-unstyled small d-inline-block">
             <li class="px-3 py-2 mb-1 bg-white text-muted">
                 <strong class="text-uppercase text-dark">Danh mục:</strong>
-                <a class="reset-anchor ms-2" th:href="@{/category/{image}(image=*{categoryCode})}" th:text="*{categoryName}"></a>
+                <a class="reset-anchor ms-2" th:href="@{/product-all(category=*{categoryCode})}" th:text="*{categoryName}"></a>
             </li>
         </ul>
     </div>
