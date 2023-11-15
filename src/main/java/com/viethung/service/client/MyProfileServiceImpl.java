@@ -1,4 +1,4 @@
-package com.viethung.service;
+package com.viethung.service.client;
 
 import org.springframework.stereotype.Service;
 

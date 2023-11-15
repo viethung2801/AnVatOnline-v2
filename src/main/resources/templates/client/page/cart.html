@@ -132,7 +132,7 @@
                                 </div>
 
                                 <div class="mt-3">
-                                    <a href="/checkout" class="btn btn-success w-100 shadow-0 mb-2"> Đặt hàng </a>
+                                    <a th:href="@{/checkout/{cartId}(cartId= ${cartId})}" class="btn btn-success w-100 shadow-0 mb-2"> Đặt hàng </a>
                                     <a href="/" class="btn btn-light w-100 border mt-2"> Tiếp tục mua sắm </a>
                                 </div>
                             </div>

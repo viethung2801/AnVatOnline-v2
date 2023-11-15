@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin-layout :: admin-layout(~{::title},~{::main})}">
+<head>
+    <title>Hóa đơn chi tiết</title>
+</head>
+
+<body>
+<main id="main" class="main">
+    <div class="pagetitle">
+        <nav>
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Hóa đơn chi tiết</h1>
+            </div>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/orders">Hóa đơn</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- End Page Title -->
+
+    <section class="section">
+        <th:block>
+            <th:block th:if="${fail}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    [[${fail}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+            <th:block th:if="${success}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    [[${success}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+
+            <th:block th:if="${param.fail}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    [[${param.fail}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+            <th:block th:if="${param.success}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    [[${param.success}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+        </th:block>
+        <div class="row">
+            <div class="card">
+                <div class="card-body mt-3">
+                    <div class="d-md-flex justify-content-between">
+                        <div class="d-flex align-items-center mb-2 mb-md-0">
+                            <h2 class="mb-0">Mã đơn hàng: [[${orderDto.orderCode}]]</h2>
+                            <th:block th:if="${orderDto.state==0}">
+                                <span class="badge bg-warning ms-2">Đang xử lý</span>
+                            </th:block>
+                            <th:block th:if="${orderDto.state==1}">
+                                <span class="badge bg-warning ms-2">Thành công</span>
+                            </th:block>
+                            <th:block th:if="${orderDto.state==2}">
+                                <span class="badge bg-warning ms-2">Đã hủy</span>
+                            </th:block>
+                        </div>
+                        <!-- select option -->
+                        <form class="d-md-flex" th:action="@{/admin/order/{orderId}(orderId=${orderDto.orderId})}" method="post">
+                            <div class="mb-2 mb-md-0">
+                                <select class="form-select" th:field="${orderDto.status}">
+                                    <th:block th:if="${orderDto.status <= 0}">
+                                        <option value="0" disabled>Đã đặt hàng</option>
+                                    </th:block>
+
+                                    <th:block th:if="${orderDto.status <= 1}">
+                                        <option value="1" th:disabled="${orderDto.status+1 != 1}">Đã xác nhận</option>
+                                    </th:block>
+
+                                    <th:block th:if="${orderDto.status <= 2}">
+                                        <option value="2" th:disabled="${orderDto.status+1 != 2}">Đang giao</option>
+                                    </th:block>
+
+                                    <th:block th:if="${orderDto.status <= 3}">
+                                        <option value="3" th:disabled="${orderDto.status+1 != 3}">Đã nhận hàng</option>
+                                    </th:block>
+                                </select>
+                            </div>
+                            <!-- button -->
+                            <div class="ms-md-3">
+                                <button class="btn btn-primary"> Cập nhật</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mt-8">
+                        <div class="row">
+                            <!-- address -->
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="mb-6">
+                                    <h6>Chi tiết người nhận</h6>
+                                    <th:block th:if="${not orderDto.userId.isEmpty()}">
+                                        <a th:href="@{/admin/user-detail/{userId}(userId=${orderDto.userId})}">Xem chi
+                                            tiết</a>
+                                    </th:block>
+                                    <p class="mb-1 lh-lg">
+                                        <span class="fw-bold">Người nhận:</span> [[${orderDto.receiverName}]]
+                                        <br>
+                                        <span class="fw-bold">Email:</span> [[${orderDto.email}]]
+                                        <br>
+                                        <span class="fw-bold">Số điện thoại:</span> [[${orderDto.phoneNumber}]]
+                                        <br>
+                                        <span class="fw-bold">Địa chỉ:</span> [[${orderDto.address}]]
+                                        <br>
+                                        <span class="fw-bold">Ghi chú:</span> [[${orderDto.note}]]
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- address -->
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <!--                                <div class="mb-6">-->
+                                <!--                                    <h6>Shipping Address</h6>-->
+                                <!--                                    <p class="mb-1 lh-lg">-->
+                                <!--                                        Gerg Harvell-->
+                                <!--                                    </p>-->
+                                <!--                                </div>-->
+                            </div>
+                            <!-- address -->
+                            <div class="col-lg-4 col-md-4 col-12">
+                                <div class="mb-6">
+                                    <h6>Chi tiết</h6>
+                                    <p class="mb-1 lh-lg">
+                                        <span class="fw-bold">Ngày tạo:</span>
+                                        [[${#temporals.format(orderDto.createdDate,'dd-MM-yyy hh:mm:ss')}]]
+                                        <br>
+                                        <span class="fw-bold">Ngày xác nhận:</span>
+                                        [[${#temporals.format(orderDto.confirmedDate,'dd-MM-yyy hh:mm:ss')}]]
+                                        <br>
+                                        <span class="fw-bold">Ngày ship:</span>
+                                        [[${#temporals.format(orderDto.shippedDate,'dd-MM-yyy hh:mm:ss')}]]
+                                        <br>
+                                        <span class="fw-bold">Ngày nhận:</span>
+                                        [[${#temporals.format(orderDto.receivedDate,'dd-MM-yyy hh:mm:ss')}]]
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <!-- Table -->
+                            <table class="table mb-0 text-nowrap table-centered">
+                                <!-- Table Head -->
+                                <thead class="bg-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Sản phẩm</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                </tr>
+                                </thead>
+                                <!-- tbody -->
+                                <tbody>
+                                <tr class="" th:each="od,i : ${orderDto.orderDetailDtos}" th:object="${od}">
+                                    <td th:text="${i.index + 1}"></td>
+                                    <td>
+                                        <a th:href="@{/admin/product-detail/{productId}(productId=*{productID})}"
+                                           class="text-inherit">
+                                            <div class="d-flex ">
+                                                <div>
+                                                    <img th:src="@{/images/{productImage}(productImage=*{productImage})}"
+                                                         alt="" width="80px">
+                                                </div>
+                                                <div class="ms-lg-4 mt-2 mt-lg-0">
+                                                    <h5 class="mb-0 h6" th:text="*{productName}"></h5>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td><span class="text-body"
+                                              th:text="${#numbers.formatDecimal(od.price,3,'COMMA',0,'POINT') + ' đ'}"></span>
+                                    </td>
+                                    <td th:text="*{quantity}"></td>
+                                    <td th:text="${#numbers.formatDecimal((od.price * od.quantity),3,'COMMA',0,'POINT') + ' đ'}"></td>
+                                </tr>
+                                <tr>
+                                    <td class="border-bottom-0 pb-0"></td>
+                                    <td class="border-bottom-0 pb-0"></td>
+                                    <td colspan="1" class="fw-medium text-dark">
+                                        Tạm tính :
+                                    </td>
+                                    <td class="fw-medium text-dark"
+                                        th:text="${#numbers.formatDecimal((orderDto.totalPrice),3,'COMMA',0,'POINT') + ' đ'}"></td>
+                                </tr>
+                                <tr>
+                                    <td class="border-bottom-0 pb-0"></td>
+                                    <td class="border-bottom-0 pb-0"></td>
+                                    <td colspan="1" class="fw-medium text-dark">
+                                        <!-- text -->
+                                        Phí ship
+                                    </td>
+                                    <td class="fw-medium text-dark">0 đ</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td colspan="1" class="fw-semibold text-dark">
+                                        <!-- text -->
+                                        Tổng tiền
+                                    </td>
+                                    <td class="fw-semibold text-dark"
+                                        th:text="${#numbers.formatDecimal((orderDto.totalPrice),3,'COMMA',0,'POINT') + ' đ'}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

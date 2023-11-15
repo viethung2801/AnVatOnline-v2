@@ -2,6 +2,7 @@ package com.viethung.entity;
 
 import com.viethung.entity.ENUM.EOrderState;
 import com.viethung.entity.ENUM.EOrderStatus;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,15 +12,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Mod10Check;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Table(name = "orders")
@@ -27,6 +32,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -64,16 +70,16 @@ public class Order {
     @Enumerated(EnumType.ORDINAL)
     private EOrderState state; // Enum: Thành công, Hủy, Đang xử lý
 
-    @Column(name = "receiver_name",nullable = false,columnDefinition = "nvarchar(50)")
+    @Column(name = "receiver_name", nullable = false, columnDefinition = "nvarchar(50)")
     private String receiverName;
 
-    @Column(name = "address",nullable = false,columnDefinition = "nvarchar(max)")
+    @Column(name = "address", nullable = false, columnDefinition = "nvarchar(max)")
     private String address;
 
-    @Column(name = "phone_number",nullable = false,columnDefinition = "nvarchar(10)")
+    @Column(name = "phone_number", nullable = false, columnDefinition = "nvarchar(10)")
     private String phoneNumber;
 
-    @Column(name = "email",nullable = false,columnDefinition = "nvarchar(max)")
+    @Column(name = "email", nullable = false, columnDefinition = "nvarchar(max)")
     private String email;// Anonymous: sẽ nhận xem đơn hàng qua email này
 
     @Column
@@ -82,4 +88,17 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderDetail> orderDetails;
+
+    public int getTotalPrice() {
+        int price = 0;
+        if (!orderDetails.isEmpty()) {
+            for (OrderDetail orderDetail : orderDetails) {
+                price += (int) (orderDetail.getQuantity() * orderDetail.getPrice().intValue());
+            }
+        }
+        return price;
+    }
 }

@@ -4,6 +4,7 @@ import com.viethung.dto.CartDetailDto;
 import com.viethung.dto.MessageDto;
 import com.viethung.entity.Cart;
 import com.viethung.entity.CartDetail;
+import com.viethung.entity.Product;
 import com.viethung.entity.User;
 import com.viethung.repository.CartDetailRepository;
 import com.viethung.repository.CartRepository;
@@ -36,6 +37,20 @@ public class CartServiceImpl {
     @Autowired
     private UserRepository userRepository;
 
+    public List<CartDetailDto> findAllById(UUID cartId,HttpServletResponse response) {
+        List<CartDetailDto> cartDetailDtos = new ArrayList<>();
+        Cart cart = cartRepository.findCartById(cartId);
+        if (cart == null){
+            cart  = newCartIdCookie(response);
+        }
+        if (cart.getCartDetails() != null){
+            cart.getCartDetails().forEach(cartDetail ->
+                    cartDetailDtos.add(mapCartDetailToCartDetailDto(cartDetail))
+            );
+        }
+        return cartDetailDtos;
+    }
+
     public List<CartDetailDto> findAllById(UUID cartId) {
         List<CartDetailDto> cartDetailDtos = new ArrayList<>();
         Cart cart = cartRepository.findCartById(cartId);
@@ -56,6 +71,12 @@ public class CartServiceImpl {
         }
 
         return cartDetailDtos;
+    }
+
+    public UUID getCartId(UUID userId){
+        User user = userRepository.findUserById(userId);
+        Cart cart = cartRepository.findByUser(user);
+        return cart.getId();
     }
 
     public MessageDto updateCartDetail(UUID cartDetailId,int quantity) {
@@ -89,7 +110,7 @@ public class CartServiceImpl {
         UUID cartId;
         if (getCookie("cartId", cookies) == null) {
             // chưa có => tạo mới 1 cookie
-            cartId = newCartIdCookie(response);
+            cartId = newCartIdCookie(response).getId();
         } else {
             // có rồi => lấy cart by id
             Cookie cookie = getCookie("cartId", cookies);
@@ -120,7 +141,7 @@ public class CartServiceImpl {
         return null;
     }
 
-    public UUID newCartIdCookie(HttpServletResponse response) {
+    public Cart newCartIdCookie(HttpServletResponse response) {
         Cart cart = Cart.builder().build();
         cart.setCode(generateCartCode());
         cart.setCreatedDate(LocalDateTime.now());
@@ -136,7 +157,7 @@ public class CartServiceImpl {
         System.out.println(value);
         response.addCookie(cookie);
 
-        return UUID.fromString(value);
+        return cart;
     }
 
     public String generateCartCode() {
@@ -220,5 +241,12 @@ public class CartServiceImpl {
             e.printStackTrace();
         }
         return MessageDto.builder().status("fail").message("Thêm thất bại").build();
+    }
+    public float getTotalPrice(List<CartDetailDto> cartDetailDtos) {
+        float value = 0;
+        for (CartDetailDto cartDetailDto : cartDetailDtos) {
+            value += (cartDetailDto.getPrice().intValue() * cartDetailDto.getQuantity());
+        }
+        return value;
     }
 }

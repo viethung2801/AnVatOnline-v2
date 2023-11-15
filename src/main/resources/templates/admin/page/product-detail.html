@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin-layout :: admin-layout(~{::title},~{::main})}">
+<head>
+    <title>Sản phẩm</title>
+</head>
+
+<body>
+<main id="main" class="main">
+    <div class="pagetitle">
+        <nav>
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Sản phẩm chi tiết</h1>
+            </div>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/products">Sản phẩm</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- End Page Title -->
+
+    <section class="section">
+        <th:block>
+            <th:block th:if="${fail}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    [[${fail}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+            <th:block th:if="${success}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    [[${success}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+
+            <th:block th:if="${param.fail}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    [[${param.fail}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+            <th:block th:if="${param.success}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    [[${param.success}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+        </th:block>
+        <div class="row">
+            <div class="card">
+                <div class="card-body mt-3">
+                    <div class="mt-8">
+                        <div class="row">
+                            <!-- address -->
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <div class="mt-2 mb-2">
+                                    <span class="fw-bold">Mã sản phẩm:</span> [[${product.code}]]
+                                    <br>
+                                    <span class="fw-bold">Giá bán:</span>
+                                    [[${#numbers.formatDecimal(product.price,3,'COMMA',0,'POINT')}]]
+                                    <br>
+                                    <span class="fw-bold">Ngày tạo:</span>
+                                    [[${#temporals.format(product.createdDate,'dd-MM-yyyy hh:mm:ss')}]]
+                                    <br>
+                                    <span class="fw-bold">Danh mục:</span> <a href="/admin/categories"
+                                                                              th:text="${product.category.name}"></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <div class="mt-2 mb-2">
+                                    <span class="fw-bold">Tên sản phẩm:</span> [[${product.name}]]
+                                    <br>
+                                    <span class="fw-bold">Giá nhập:</span>
+                                    [[${#numbers.formatDecimal(product.cost,3,'COMMA',0,'POINT')}]]
+                                    <br>
+                                    <span class="fw-bold">Trọng lượng:</span> [[${product.weight}]]
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="col-12">
+                                <span class="fw-bold">Mô tả:</span> [[${product.description}]]
+                                <br>
+                                <span class="fw-bold">Ảnh:</span>
+                                <th:block th:if="${product.productImages != null}">
+                                    <img class="m-2"
+                                         th:src="@{/images/{imageName}(imageName=${img.url})}"
+                                         th:each="img : ${product.productImages}"
+                                         alt=""
+                                         width="160px">
+                                </th:block>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <!-- Table -->
+                            <table class="table mb-0 text-nowrap table-centered">
+                                <!-- Table Head -->
+                                <thead class="bg-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Hóa đơn</th>
+                                    <th>Khách hàng</th>
+                                    <th>Tổng tiền</th>
+                                </tr>
+                                </thead>
+                                <!-- tbody -->
+                                <tbody>
+                                <tr th:each="o,i : ${orderDtos}">
+                                    <th th:text="${i.index}">#</th>
+                                    <th>
+                                        <a th:href="'/admin/order-detail/'+${o.orderId}"
+                                           th:text="${o.orderCode}">
+                                        </a>
+                                    </th>
+                                    <th><a th:href="'/admin/user-detail/'+${o.userId}"
+                                           th:text="${o.userFullName}">
+                                    </a></th>
+                                    <th th:text="${#numbers.formatDecimal(o.totalPrice,3,'COMMA',0,'POINT') + ' đ'}"></th>
+                                </tr>
+                                <tr>
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-end datatable-pagination-list">
+                                            <li class="page-item "
+                                                th:each="p: ${#numbers.sequence(0,orderDtos.totalPages -1)}">
+                                                <a class="page-link"
+                                                   th:href="@{/admin/product-detail/{productId}(productId=${product.id},page=${p})}"
+                                                   th:text="${p+1}">
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

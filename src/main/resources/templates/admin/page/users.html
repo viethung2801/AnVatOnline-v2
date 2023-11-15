@@ -123,7 +123,7 @@
                                                      alt="" width="100px">
                                             </td>
                                             <td>
-                                                <a th:href="'#'" th:text="${c.lastName + ' ' +c.firstName}"></a>
+                                                <a th:href="@{/admin/user-detail/{userId}(userId=${c.id})}" th:text="${c.lastName + ' ' +c.firstName}"></a>
                                             </td>
                                             <td>
                                                 <th:block th:if="${c.roles.size() == 1}">

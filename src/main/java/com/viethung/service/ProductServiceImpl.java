@@ -1,5 +1,6 @@
 package com.viethung.service;
 
+import com.viethung.dto.OrderDetailDto;
 import com.viethung.dto.ProductFormDto;
 import com.viethung.dto.ProductListDto;
 import com.viethung.entity.Category;
@@ -7,6 +8,7 @@ import com.viethung.entity.ENUM.EProductStatus;
 import com.viethung.entity.Product;
 import com.viethung.entity.ProductImage;
 import com.viethung.repository.CategoryRepository;
+import com.viethung.repository.OrderDetailRepository;
 import com.viethung.repository.ProductImageRepository;
 import com.viethung.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +28,6 @@ import java.util.UUID;
 public class ProductServiceImpl {
     @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     @Autowired
     private UploadFileServiceImpl uploadFileService;
@@ -66,6 +65,10 @@ public class ProductServiceImpl {
         }
         //mapper
         return mapProductToProductFormDto(product);
+    }
+
+    public Product findProductDetailById(UUID id) {
+        return productRepository.findById(id).orElse(null);
     }
 
     public boolean deleteById(UUID id) {

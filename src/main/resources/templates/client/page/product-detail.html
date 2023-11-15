@@ -90,6 +90,7 @@
                         <i class="bi bi-caret-left"></i>
                     </button>
                     <input type="number" class="col-5 " name="qty" value="1" min="1" step="1">
+                    <input type="hidden" name="productId" th:value="${productDetailDto.id}">
                     <button type="button" class="btn col-2 p-0"
                             onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
                         <i class="bi bi-caret-right"></i>
@@ -104,10 +105,10 @@
                 </button>
             </div>
             <div class="col-sm-3 pl-sm-0">
-                <a
+                <button type="submit" th:formmethod="get" th:formaction="'/checkout'"
                    class="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0">
                     Mua ngay
-                </a>
+                </button>
             </div>
         </form>
         <ul class="list-unstyled small d-inline-block">

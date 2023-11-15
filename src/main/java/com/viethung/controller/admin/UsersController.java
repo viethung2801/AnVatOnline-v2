@@ -1,6 +1,7 @@
 package com.viethung.controller.admin;
 
 import com.viethung.dto.AdminUserDto;
+import com.viethung.dto.OrderDto;
 import com.viethung.entity.User;
 import com.viethung.service.AdminUserServiceImpl;
 import com.viethung.service.RegisterServiceImpl;
@@ -148,6 +149,18 @@ public class UsersController {
             redirectAttributes.addFlashAttribute("fail", "Xóa thất bại");
         }
         return "redirect:/admin/users";
+    }
+
+    @GetMapping("/user-detail/{id}")
+    public String showUserDetail(@PathVariable UUID id,
+                                 @RequestParam Optional<Integer> page ,
+                                 Model model) {
+        User user = adminUserService.finUserById(id);
+        Pageable pageable = PageRequest.of(page.orElse(0),50);
+        Page<OrderDto> orderDtos = adminUserService.findAllOrderByUserId(user.getId(),pageable);
+        model.addAttribute("user",user);
+        model.addAttribute("orderDtos",orderDtos);
+        return "admin/page/user-detail";
     }
 //
     //search

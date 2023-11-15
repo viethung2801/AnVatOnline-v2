@@ -18,8 +18,8 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         request -> {
-                            request.requestMatchers("/admin/**").hasAnyRole("ADMIN");
                             request.requestMatchers("/my-profile").authenticated();
+                            request.requestMatchers("/admin/**").hasAnyRole("ADMIN");
                             request.anyRequest().permitAll();
                         }
                 ).formLogin(

@@ -1,9 +1,12 @@
 package com.viethung.controller.admin;
 
+import com.viethung.dto.OrderDto;
 import com.viethung.dto.ProductFormDto;
 import com.viethung.dto.ProductListDto;
 import com.viethung.entity.Category;
+import com.viethung.entity.Product;
 import com.viethung.service.CategoryServiceImpl;
+import com.viethung.service.OrderServiceImpl;
 import com.viethung.service.ProductServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,10 @@ public class ProductsController {
 
     @Autowired
     private CategoryServiceImpl categoryService;
+
+    @Autowired
+    private OrderServiceImpl orderService;
+
 
     @GetMapping("/products")
     public String showAllProduct(@RequestParam Optional<Integer> page,
@@ -90,12 +97,23 @@ public class ProductsController {
     }
 
     @GetMapping("/products/{id}")
-    public String showProductDetail(Model model, @PathVariable UUID id) {
+    public String showProductForm(Model model, @PathVariable UUID id) {
         List<Category> categories = categoryService.findAll();
         ProductFormDto productFormDto = productService.findProductFormById(id);
         model.addAttribute("productFormDto", productFormDto);
         model.addAttribute("categories", categories);
         return "admin/page/product-form";
+    }
+    @GetMapping("/product-detail/{id}")
+    public String showProductDetail(Model model,
+                                    @RequestParam Optional<Integer> page,
+                                    @PathVariable UUID id) {
+        Product product = productService.findProductDetailById(id);
+        Pageable pageable = PageRequest.of(page.orElse(0),50);
+        Page<OrderDto> orderDtos = orderService.findAllOrderByProduct(product,pageable);
+        model.addAttribute("product", product);
+        model.addAttribute("orderDtos", orderDtos);
+        return "admin/page/product-detail";
     }
 
     @GetMapping("/products/delete/{id}")

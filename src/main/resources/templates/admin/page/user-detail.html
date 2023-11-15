@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin-layout :: admin-layout(~{::title},~{::main})}">
+<head>
+    <title>Người dùng</title>
+</head>
+
+<body>
+<main id="main" class="main">
+    <div class="pagetitle">
+        <nav>
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>NGười dùng chi tiết</h1>
+            </div>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/users">Sản phẩm</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- End Page Title -->
+
+    <section class="section">
+        <th:block>
+            <th:block th:if="${fail}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    [[${fail}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+            <th:block th:if="${success}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    [[${success}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+
+            <th:block th:if="${param.fail}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    [[${param.fail}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+            <th:block th:if="${param.success}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    [[${param.success}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </th:block>
+        </th:block>
+        <div class="row">
+            <div class="card">
+                <div class="card-body mt-3">
+                    <div class="mt-8">
+                        <div class="row">
+                            <!-- address -->
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <div class="mt-2 mb-2">
+                                    <span class="fw-bold">Ảnh:</span>
+                                    <th:block th:if="${user.imageUrl != null}">
+                                        <img class="m-2"
+                                             th:src="@{/images/{imageName}(imageName=${user.imageUrl})}"
+                                             alt=""
+                                             width="160px">
+                                    </th:block>
+                                    <br>
+                                    <span class="fw-bold">Họ</span> [[${user.code}]]
+                                    <br>
+                                    <span class="fw-bold">Ngày sinh:</span> [[${#temporals.format(user.dateBirth,'dd-MM-yyyy')}]]
+                                    <br>
+                                    <span class="fw-bold">Email:</span> [[${user.email}]]
+                                    <br>
+                                    <span class="fw-bold">Giới tính: </span> [[${user.gender == 1?'Nam':'Nữ'}]]
+                                    <br>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <div class="mt-2 mb-2" >
+                                    <span class="fw-bold">Mã:</span> [[${user.code}]]
+                                    <br>
+                                    <span class="fw-bold">Tên:</span> [[${user.firstName}]]
+                                    <br>
+                                    <span class="fw-bold">Địa chỉ:</span> [[${user.address}]]
+                                    <br>
+                                    <span class="fw-bold">Số điện thoại:</span> [[${user.phoneNumber}]]
+                                    <br>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="col-12">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <!-- Table -->
+                            <table class="table mb-0 text-nowrap table-centered">
+                                <!-- Table Head -->
+                                <thead class="bg-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Hóa đơn</th>
+                                    <th>Khách hàng</th>
+                                    <th>Tổng tiền</th>
+                                </tr>
+                                </thead>
+                                <!-- tbody -->
+                                <tbody>
+                                <tr th:each="o,i : ${orderDtos}">
+                                    <th th:text="${i.index}">#</th>
+                                    <th>
+                                        <a th:href="'/admin/order-detail/'+${o.orderId}"
+                                           th:text="${o.orderCode}">
+                                        </a>
+                                    </th>
+                                    <th><a th:href="'/admin/user-detail/'+${o.userId}"
+                                           th:text="${o.userFullName}">
+                                    </a></th>
+                                    <th th:text="${#numbers.formatDecimal(o.totalPrice,3,'COMMA',0,'POINT') + ' đ'}"></th>
+                                </tr>
+                                <tr>
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-end datatable-pagination-list">
+                                            <li class="page-item "
+                                                th:each="p: ${#numbers.sequence(0,orderDtos.totalPages -1)}">
+                                                <a class="page-link"
+                                                   th:href="@{/admin/user-detail/{userId}(userId=${user.id},page=${p})}"
+                                                   th:text="${p+1}">
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

@@ -1,13 +1,17 @@
 package com.viethung.service;
 
 import com.viethung.dto.AdminUserDto;
+import com.viethung.dto.OrderDto;
 import com.viethung.entity.ENUM.ERoleName;
+import com.viethung.entity.Order;
 import com.viethung.entity.Role;
 import com.viethung.entity.User;
+import com.viethung.repository.OrderRepository;
 import com.viethung.repository.RoleRepository;
 import com.viethung.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,12 @@ public class AdminUserServiceImpl {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderServiceImpl orderService;
 
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
@@ -120,6 +130,9 @@ public class AdminUserServiceImpl {
         User user = userRepository.findById(id).orElse(null);
         return mapUserToAdminUserDto(user);
     }
+    public User finUserById(UUID id) {
+       return userRepository.findById(id).orElse(null);
+    }
 
     public AdminUserDto mapUserToAdminUserDto(User user) {
         AdminUserDto adminUserDto = AdminUserDto.builder().build();
@@ -176,5 +189,12 @@ public class AdminUserServiceImpl {
     public Page<User> findAllByKeys(Pageable pageable, String keys) {
         keys = "%" + keys + "%";
         return userRepository.searchByKeys(keys, pageable);
+    }
+
+    public Page<OrderDto> findAllOrderByUserId(UUID id, Pageable pageable) {
+        Page<Order> orders = orderRepository.findAllOrderByUser(id,pageable);
+        List<OrderDto> orderDtos = new ArrayList<>();
+        orders.forEach(order -> orderDtos.add(orderService.mapOrderToOrderDto(order)));
+        return new PageImpl<OrderDto>(orderDtos,pageable,orders.getTotalElements());
     }
 }

@@ -37,22 +37,25 @@ public class CartController {
     @GetMapping("/my-cart")
     public String displayUserCart(Authentication principal,
                                   HttpServletRequest request,
+                                  HttpServletResponse response,
                                   Model model,
                                   RedirectAttributes redirectAttributes) {
         List<CartDetailDto> cartDetailDtos;
         if (principal == null) {
             Cookie cookie = cartService.getCookie("cartId", request.getCookies());
             UUID cartId = UUID.fromString(cookie.getValue());
-            cartDetailDtos = cartService.findAllById(cartId);
+            cartDetailDtos = cartService.findAllById(cartId,response);
+            model.addAttribute("cartId",cartId);
         } else {
 //            cartDetailDtos = cartService.findAllByUser()
             CustomUserDetails customUserDetails = (CustomUserDetails) principal.getPrincipal();
             cartDetailDtos = cartService.findByUser(customUserDetails.getId());
+            model.addAttribute("cartId",cartService.getCartId(customUserDetails.getId()));
         }
 
         //gợi ý
         List<ProductCardDto> productCardDtos = productDetailService.findTop8Related();
-        float totalPrice = getTotalPrice(cartDetailDtos);
+        float totalPrice = cartService.getTotalPrice(cartDetailDtos);
         model.addAttribute("cartDetailDtos", cartDetailDtos);
         model.addAttribute("productCardDtos", productCardDtos);
         model.addAttribute("totalPrice", totalPrice);
@@ -94,11 +97,5 @@ public class CartController {
         return "redirect:/my-cart";
     }
 
-    private float getTotalPrice(List<CartDetailDto> cartDetailDtos) {
-        float value = 0;
-        for (CartDetailDto cartDetailDto : cartDetailDtos) {
-            value += (cartDetailDto.getPrice().intValue() * cartDetailDto.getQuantity());
-        }
-        return value;
-    }
+
 }
