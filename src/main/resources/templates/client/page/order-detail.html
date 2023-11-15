@@ -8,411 +8,210 @@ th:replace="~{client-layout :: clientLayout(~{:: title},~{:: main})}">
 
 <body>
     <main id="main">
-        <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="flex-grow-1">
+            <th:block>
+                <th:block th:if="${fail}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        [[${fail}]]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                </th:block>
+                <th:block th:if="${success}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        [[${success}]]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                </th:block>
 
+                <th:block th:if="${param.fail}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        [[${param.fail}]]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                </th:block>
+                <th:block th:if="${param.success}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        [[${param.success}]]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                </th:block>
+            </th:block>
             <h4 class="py-3 mb-4">
-                Order Details
+                Chi tiết đơn hàng
             </h4>
 
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
 
                 <div class="d-flex flex-column justify-content-center">
-                    <h5 class="mb-1 mt-3">Order #32543 <span class="badge bg-success me-2 ms-2">Paid</span> <span class="badge bg-info">Ready to Pickup</span></h5>
-                    <p class="text-body">Aug 17, <span id="orderYear">2023</span>, 5:48 (ET)</p>
+                    <h5 class="mb-1 mt-3">Đơn hàng [[${orderDto.orderCode}]]
+                        <th:block th:if="${orderDto.status == 0}">
+                            <span class="badge bg-info text-dark">Đã đặt hàng</span>
+                        </th:block>
+                        <th:block th:if="${orderDto.status == 1}">
+                            <span class="badge bg-secondary">Đã xác nhận</span>
+                        </th:block>
+                        <th:block th:if="${orderDto.status == 2}">
+                            <span class="badge bg-warning text-dark">Đang giao</span>
+                        </th:block>
+                        <th:block th:if="${orderDto.status == 3}">
+                            <span class="badge bg-success">Đã nhận hàng</span>
+                        </th:block>
+
+                        <th:block th:if="${orderDto.state==0}">
+                            <span class="badge bg-warning ms-2">Đang xử lý</span>
+                        </th:block>
+                        <th:block th:if="${orderDto.state==1}">
+                            <span class="badge bg-warning ms-2">Thành công</span>
+                        </th:block>
+                        <th:block th:if="${orderDto.state==2}">
+                            <span class="badge bg-danger ms-2">Đã hủy</span>
+                        </th:block>
+                    </h5>
                 </div>
                 <div class="d-flex align-content-center flex-wrap gap-2">
-                    <button class="btn btn-danger delete-order">Delete Order</button>
+                    <a th:href="'/cancel-order/'+${orderDto.orderId}"
+                       class="btn btn-danger"
+                       th:classappend="${orderDto.status >= 1 or orderDto.state != 0 ?'disabled':''}"
+                       onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này chứ')" >
+                        Hủy đơn
+                    </a>
                 </div>
             </div>
 
             <!-- Order Details Table -->
 
             <div class="row">
-                <div class="col-12 col-lg-8">
-                    <div class="card mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title m-0">Order details</h5>
-                            <h6 class="m-0"><a href=" javascript:void(0)">Edit</a></h6>
+                <div class="card">
+                    <div class="card-body mt-3">
+                        <div class="d-md-flex justify-content-between">
+                            <div class="d-flex align-items-center mb-2 mb-md-0">
+                                <h2 class="mb-0">Mã đơn hàng: [[${orderDto.orderCode}]]</h2>
+
+                            </div>
+
                         </div>
-                        <div class="table-responsive">
-                            <div id="DataTables_Table_0_wrapper" class="">
-                                <table class="table" id="DataTables_Table_0" style="width: 799px;">
-                                    <thead>
-                                        <tr>
-                                            <th class="w-50" style="width: 295px;">
-                                                Products
-                                            </th>
-                                            <th class="w-25" style="width: 123px;">
-                                                price
-                                            </th>
-                                            <th class="w-25" style="width: 114px;">
-                                                qty
-                                            </th>
-                                            <th class="" style="width: 53px;">
-                                                total
-                                            </th>
-                                        </tr>
+                        <div class="mt-8">
+                            <div class="row">
+                                <!-- address -->
+                                <div class="col-lg-4 col-md-4 col-12">
+                                    <div class="mb-6">
+                                        <h6>Chi tiết người nhận</h6>
+                                        <p class="mb-1 lh-lg">
+                                            <span class="fw-bold">Người nhận:</span> [[${orderDto.receiverName}]]
+                                            <br>
+                                            <span class="fw-bold">Email:</span> [[${orderDto.email}]]
+                                            <br>
+                                            <span class="fw-bold">Số điện thoại:</span> [[${orderDto.phoneNumber}]]
+                                            <br>
+                                            <span class="fw-bold">Địa chỉ:</span> [[${orderDto.address}]]
+                                            <br>
+                                            <span class="fw-bold">Ghi chú:</span> [[${orderDto.note}]]
+                                        </p>
+                                    </div>
+                                </div>
+                                <!-- address -->
+                                <div class="col-lg-4 col-md-4 col-12">
+                                </div>
+                                <!-- address -->
+                                <div class="col-lg-4 col-md-4 col-12">
+                                    <div class="mb-6">
+                                        <h6>Chi tiết</h6>
+                                        <p class="mb-1 lh-lg">
+                                            <span class="fw-bold">Ngày tạo:</span>
+                                            [[${#temporals.format(orderDto.createdDate,'dd-MM-yyy hh:mm:ss')}]]
+                                            <br>
+                                            <span class="fw-bold">Ngày xác nhận:</span>
+                                            [[${#temporals.format(orderDto.confirmedDate,'dd-MM-yyy hh:mm:ss')}]]
+                                            <br>
+                                            <span class="fw-bold">Ngày ship:</span>
+                                            [[${#temporals.format(orderDto.shippedDate,'dd-MM-yyy hh:mm:ss')}]]
+                                            <br>
+                                            <span class="fw-bold">Ngày nhận:</span>
+                                            [[${#temporals.format(orderDto.receivedDate,'dd-MM-yyy hh:mm:ss')}]]
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <!-- Table -->
+                                <table class="table mb-0 text-nowrap table-centered">
+                                    <!-- Table Head -->
+                                    <thead class="bg-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                    </tr>
                                     </thead>
+                                    <!-- tbody -->
                                     <tbody>
-                                        <tr class="">
-                                            <td class="">
-                                                <div class="d-flex justify-content-start align-items-center text-nowrap">
-                                                    <img class="rounded-2 w-50 p-2" src="../images/slide-1.jpg" alt="">
-                                                    <div class="d-flex flex-column">
-                                                        <h6 class="text-body mb-0">Wooden Chair</h6><small class="text-muted">Material: Wooden</small>
+                                    <tr class="" th:each="od,i : ${orderDto.orderDetailDtos}" th:object="${od}">
+                                        <td th:text="${i.index + 1}"></td>
+                                        <td>
+                                            <a th:href="@{/product-detail/{productId}(productId=*{productID})}"
+                                               class="text-inherit">
+                                                <div class="d-flex ">
+                                                    <div>
+                                                        <img th:src="@{/images/{productImage}(productImage=*{productImage})}"
+                                                             alt="" width="80px">
+                                                    </div>
+                                                    <div class="ms-lg-4 mt-2 mt-lg-0">
+                                                        <h5 class="mb-0 h6" th:text="*{productName}"></h5>
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td><span>$841</span></td>
-                                            <td><span class="text-body">2</span></td>
-                                            <td>
-                                                <h6 class="mb-0">$1682</h6>
-                                            </td>
-                                        </tr>
+                                            </a>
+                                        </td>
+                                        <td><span class="text-body"
+                                                  th:text="${#numbers.formatDecimal(od.price,3,'COMMA',0,'POINT') + ' đ'}"></span>
+                                        </td>
+                                        <td th:text="*{quantity}"></td>
+                                        <td th:text="${#numbers.formatDecimal((od.price * od.quantity),3,'COMMA',0,'POINT') + ' đ'}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-bottom-0 pb-0"></td>
+                                        <td class="border-bottom-0 pb-0"></td>
+                                        <td colspan="1" class="fw-medium text-dark">
+                                            Tạm tính :
+                                        </td>
+                                        <td class="fw-medium text-dark"
+                                            th:text="${#numbers.formatDecimal((orderDto.totalPrice),3,'COMMA',0,'POINT') + ' đ'}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-bottom-0 pb-0"></td>
+                                        <td class="border-bottom-0 pb-0"></td>
+                                        <td colspan="1" class="fw-medium text-dark">
+                                            <!-- text -->
+                                            Phí ship
+                                        </td>
+                                        <td class="fw-medium text-dark">0 đ</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td colspan="1" class="fw-semibold text-dark">
+                                            <!-- text -->
+                                            Tổng tiền
+                                        </td>
+                                        <td class="fw-semibold text-dark"
+                                            th:text="${#numbers.formatDecimal((orderDto.totalPrice),3,'COMMA',0,'POINT') + ' đ'}"></td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="d-flex justify-content-end align-items-center m-3 mb-2 p-1">
-                                <div class="order-calculations">
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span class="w-px-100">Subtotal:</span>
-                                        <span class="text-heading">$6398</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span class="w-px-100">Discount:</span>
-                                        <span class="text-heading mb-0">$22</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span class="w-px-100">Tax:</span>
-                                        <span class="text-heading">$30</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <h6 class="w-px-100 mb-0">Total:</h6>
-                                        <h6 class="mb-0">$6450</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Shipping activity -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="card-title m-0">Shipping activity</h5>
-                        </div>
-                        <div class="card-body">
-                            <ul class="pb-0 mb-0">
-                                <li class="border-primary">
-                                    <div class="d-flex justify-content-between">
-                                        <h6 class="mb-0">Order was placed </h6>
-                                        <span class="text-muted">Tuesday 11:29 AM</span>
-                                    </div>
-                                    <p class="mt-2">Your order has been placed successfully</p>
-                                </li>
-                            </ul>
                         </div>
                     </div>
 
-                </div>
-                <!-- Shipping activity -->
-
-                <!-- Customer details -->
-                <div class="col-12 col-lg-4">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h6 class="card-title m-0">Customer details</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-start align-items-center mb-4">
-                                <img class="w-25 rounded-circle m-3" src="../images/product-1.jpg" alt="Avatar">
-                                <div class="d-flex flex-column">
-                                    <a href="app-user-view-account.html" class="text-body text-nowrap">
-                                        <h6 class="mb-0">Shamus Tuttle</h6>
-                                    </a>
-                                    <small class="text-muted">Customer ID: #58909</small>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <h6>Contact info</h6>
-                            </div>
-                            <p class=" mb-1">Email: Shamus889@yahoo.com</p>
-                            <p class=" mb-0">Mobile: +1 (609) 972-22-22</p>
-                            <p class="mb-0">Address: 45 Roker Terrace Latheronwheel KW5 8NW,London UK</p>
-                        </div>
-                    </div>
-
-                    <div class="card mb-4">
-                        <div class="card-header d-flex justify-content-between">
-                            <h6 class="card-title m-0">Billing address</h6>
-                            <h6 class="m-0"><a href=" javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addNewAddress">Edit</a></h6>
-                        </div>
-                        <div class="card-body">
-                            <p class="mb-4">45 Roker Terrace Latheronwheel KW5 8NW,London UK</p>
-                            <h6 class="mb-0 pb-2">Mastercard</h6>
-                            <p class="mb-0">Card Number: ******4291</p>
-                        </div>
-
-                    </div>
-                </div>
-                <!-- Customer details -->
-            </div>
-
-            <!-- Edit User Modal -->
-            <div class="modal fade" id="editUser" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-simple modal-edit-user">
-                    <div class="modal-content p-3 p-md-5">
-                        <div class="modal-body">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            <div class="text-center mb-4">
-                                <h3>Edit User Information</h3>
-                                <p>Updating user details will receive a privacy audit.</p>
-                            </div>
-                            <form id="editUserForm" class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" onsubmit="return false" novalidate="novalidate">
-                                <div class="col-12 col-md-6 fv-plugins-icon-container">
-                                    <label class="form-label" for="modalEditUserFirstName">First Name</label>
-                                    <input type="text" id="modalEditUserFirstName" name="modalEditUserFirstName" class="form-control" placeholder="John">
-                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6 fv-plugins-icon-container">
-                                    <label class="form-label" for="modalEditUserLastName">Last Name</label>
-                                    <input type="text" id="modalEditUserLastName" name="modalEditUserLastName" class="form-control" placeholder="Doe">
-                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">
-                                    </div>
-                                </div>
-                                <div class="col-12 fv-plugins-icon-container">
-                                    <label class="form-label" for="modalEditUserName">Username</label>
-                                    <input type="text" id="modalEditUserName" name="modalEditUserName" class="form-control" placeholder="john.doe.007">
-                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalEditUserEmail">Email</label>
-                                    <input type="text" id="modalEditUserEmail" name="modalEditUserEmail" class="form-control" placeholder="example@domain.com">
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalEditUserStatus">Status</label>
-                                    <select id="modalEditUserStatus" name="modalEditUserStatus" class="form-select" aria-label="Default select example">
-                                        <option selected="">Status</option>
-                                        <option value="1">Active</option>
-                                        <option value="2">Inactive</option>
-                                        <option value="3">Suspended</option>
-                                    </select>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalEditTaxID">Tax ID</label>
-                                    <input type="text" id="modalEditTaxID" name="modalEditTaxID" class="form-control modal-edit-tax-id" placeholder="123 456 7890">
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalEditUserPhone">Phone Number</label>
-                                    <div class="input-group input-group-merge">
-                                        <span class="input-group-text">+1</span>
-                                        <input type="text" id="modalEditUserPhone" name="modalEditUserPhone" class="form-control phone-number-mask" placeholder="202 555 0111">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalEditUserLanguage">Language</label>
-                                    <div class="position-relative">
-                                        <div class="position-relative"><select id="modalEditUserLanguage" name="modalEditUserLanguage" class="select2 form-select select2-hidden-accessible" multiple="" tabindex="-1" aria-hidden="true" data-select2-id="modalEditUserLanguage">
-                                                <option value="">Select</option>
-                                                <option value="english" selected="" data-select2-id="17">English
-                                                </option>
-                                                <option value="spanish">Spanish</option>
-                                                <option value="french">French</option>
-                                                <option value="german">German</option>
-                                                <option value="dutch">Dutch</option>
-                                                <option value="hebrew">Hebrew</option>
-                                                <option value="sanskrit">Sanskrit</option>
-                                                <option value="hindi">Hindi</option>
-                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="16" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--multiple" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="-1" aria-disabled="false">
-                                                        <ul class="select2-selection__rendered">
-                                                            <li class="select2-selection__choice" title="English" data-select2-id="18"><span class="select2-selection__choice__remove" role="presentation">×</span>English</li>
-                                                            <li class="select2-search select2-search--inline"><input class="select2-search__field" type="search" tabindex="0" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" role="searchbox" aria-autocomplete="list" placeholder="" style="width: 0.75em;"></li>
-                                                        </ul>
-                                                    </span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span></div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalEditUserCountry">Country</label>
-                                    <div class="position-relative">
-                                        <div class="position-relative"><select id="modalEditUserCountry" name="modalEditUserCountry" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1" aria-hidden="true" data-select2-id="modalEditUserCountry">
-                                                <option value="" data-select2-id="45">Select</option>
-                                                <option value="Australia">Australia</option>
-                                                <option value="Bangladesh">Bangladesh</option>
-                                                <option value="Belarus">Belarus</option>
-                                                <option value="Brazil">Brazil</option>
-                                                <option value="Canada">Canada</option>
-                                                <option value="China">China</option>
-                                                <option value="France">France</option>
-                                                <option value="Germany">Germany</option>
-                                                <option value="India">India</option>
-                                                <option value="Indonesia">Indonesia</option>
-                                                <option value="Israel">Israel</option>
-                                                <option value="Italy">Italy</option>
-                                                <option value="Japan">Japan</option>
-                                                <option value="Korea">Korea, Republic of</option>
-                                                <option value="Mexico">Mexico</option>
-                                                <option value="Philippines">Philippines</option>
-                                                <option value="Russia">Russian Federation</option>
-                                                <option value="South Africa">South Africa</option>
-                                                <option value="Thailand">Thailand</option>
-                                                <option value="Turkey">Turkey</option>
-                                                <option value="Ukraine">Ukraine</option>
-                                                <option value="United Arab Emirates">United Arab Emirates</option>
-                                                <option value="United Kingdom">United Kingdom</option>
-                                                <option value="United States">United States</option>
-                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="44" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-modalEditUserCountry-container"><span class="select2-selection__rendered" id="select2-modalEditUserCountry-container" role="textbox" aria-readonly="true"><span class="select2-selection__placeholder">Select
-                                                                value</span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span></div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <label class="switch">
-                                        <input type="checkbox" class="switch-input">
-                                        <span class="switch-toggle-slider">
-                                            <span class="switch-on"></span>
-                                            <span class="switch-off"></span>
-                                        </span>
-                                        <span class="switch-label">Use as a billing address?</span>
-                                    </label>
-                                </div>
-                                <div class="col-12 text-center">
-                                    <button type="submit" class="btn btn-primary me-sm-3 me-1">Submit</button>
-                                    <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                                </div>
-                                <input type="hidden">
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--/ Edit User Modal -->
-
-            <!-- Add New Address Modal -->
-            <div class="modal fade" id="addNewAddress" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-simple modal-add-new-address">
-                    <div class="modal-content p-3 p-md-5">
-                        <div class="modal-body">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            <div class="text-center mb-4">
-                                <h3 class="address-title">Add New Address</h3>
-                                <p class="address-subtitle">Add new address for express delivery</p>
-                            </div>
-                            <form id="addNewAddressForm" class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" onsubmit="return false" novalidate="novalidate">
-
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-md mb-md-0 mb-3">
-                                            <div class="form-check custom-option custom-option-icon checked">
-                                                <label class="form-check-label custom-option-content" for="customRadioHome">
-                                                    <span class="custom-option-body">
-                                                        <i class="bx bx-home"></i>
-                                                        <span class="custom-option-title">Home</span>
-                                                        <small> Delivery time (9am – 9pm) </small>
-                                                    </span>
-                                                    <input name="customRadioIcon" class="form-check-input" type="radio" value="" id="customRadioHome" checked="">
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md mb-md-0 mb-3">
-                                            <div class="form-check custom-option custom-option-icon">
-                                                <label class="form-check-label custom-option-content" for="customRadioOffice">
-                                                    <span class="custom-option-body">
-                                                        <i class="bx bx-briefcase"></i>
-                                                        <span class="custom-option-title"> Office </span>
-                                                        <small> Delivery time (9am – 5pm) </small>
-                                                    </span>
-                                                    <input name="customRadioIcon" class="form-check-input" type="radio" value="" id="customRadioOffice">
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6 fv-plugins-icon-container">
-                                    <label class="form-label" for="modalAddressFirstName">First Name</label>
-                                    <input type="text" id="modalAddressFirstName" name="modalAddressFirstName" class="form-control" placeholder="John">
-                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6 fv-plugins-icon-container">
-                                    <label class="form-label" for="modalAddressLastName">Last Name</label>
-                                    <input type="text" id="modalAddressLastName" name="modalAddressLastName" class="form-control" placeholder="Doe">
-                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label" for="modalAddressCountry">Country</label>
-                                    <div class="position-relative">
-                                        <div class="position-relative"><select id="modalAddressCountry" name="modalAddressCountry" class="select2 form-select select2-hidden-accessible" data-allow-clear="true" tabindex="-1" aria-hidden="true" data-select2-id="modalAddressCountry">
-                                                <option value="" data-select2-id="72">Select</option>
-                                                <option value="Australia">Australia</option>
-                                                <option value="Bangladesh">Bangladesh</option>
-                                                <option value="Belarus">Belarus</option>
-                                                <option value="Brazil">Brazil</option>
-                                                <option value="Canada">Canada</option>
-                                                <option value="China">China</option>
-                                                <option value="France">France</option>
-                                                <option value="Germany">Germany</option>
-                                                <option value="India">India</option>
-                                                <option value="Indonesia">Indonesia</option>
-                                                <option value="Israel">Israel</option>
-                                                <option value="Italy">Italy</option>
-                                                <option value="Japan">Japan</option>
-                                                <option value="Korea">Korea, Republic of</option>
-                                                <option value="Mexico">Mexico</option>
-                                                <option value="Philippines">Philippines</option>
-                                                <option value="Russia">Russian Federation</option>
-                                                <option value="South Africa">South Africa</option>
-                                                <option value="Thailand">Thailand</option>
-                                                <option value="Turkey">Turkey</option>
-                                                <option value="Ukraine">Ukraine</option>
-                                                <option value="United Arab Emirates">United Arab Emirates</option>
-                                                <option value="United Kingdom">United Kingdom</option>
-                                                <option value="United States">United States</option>
-                                            </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="71" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-modalAddressCountry-container"><span class="select2-selection__rendered" id="select2-modalAddressCountry-container" role="textbox" aria-readonly="true"><span class="select2-selection__placeholder">Select
-                                                                value</span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span></div>
-                                    </div>
-                                </div>
-                                <div class="col-12 ">
-                                    <label class="form-label" for="modalAddressAddress1">Address Line 1</label>
-                                    <input type="text" id="modalAddressAddress1" name="modalAddressAddress1" class="form-control" placeholder="12, Business Park">
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label" for="modalAddressAddress2">Address Line 2</label>
-                                    <input type="text" id="modalAddressAddress2" name="modalAddressAddress2" class="form-control" placeholder="Mall Road">
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalAddressLandmark">Landmark</label>
-                                    <input type="text" id="modalAddressLandmark" name="modalAddressLandmark" class="form-control" placeholder="Nr. Hard Rock Cafe">
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalAddressCity">City</label>
-                                    <input type="text" id="modalAddressCity" name="modalAddressCity" class="form-control" placeholder="Los Angeles">
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalAddressLandmark">State</label>
-                                    <input type="text" id="modalAddressState" name="modalAddressState" class="form-control" placeholder="California">
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalAddressZipCode">Zip Code</label>
-                                    <input type="text" id="modalAddressZipCode" name="modalAddressZipCode" class="form-control" placeholder="99950">
-                                </div>
-                                <div class="col-12">
-                                    <label class="switch">
-                                        <input type="checkbox" class="switch-input">
-                                        <span class="switch-toggle-slider">
-                                            <span class="switch-on"></span>
-                                            <span class="switch-off"></span>
-                                        </span>
-                                        <span class="switch-label">Use as a billing address?</span>
-                                    </label>
-                                </div>
-                                <div class="col-12 text-center">
-                                    <button type="submit" class="btn btn-primary me-sm-3 me-1">Submit</button>
-                                    <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                                </div>
-                                <input type="hidden">
-                            </form>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

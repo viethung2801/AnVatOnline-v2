@@ -35,6 +35,18 @@ public class OrderServiceImpl {
         return new PageImpl<>(orderDtos, pageable, orders.getTotalElements());
     }
 
+    public boolean onCancelOrder(UUID orderId){
+        try {
+            Order order = orderRepository.findById(orderId).get();
+            order.setState(EOrderState.CANCEL);
+            orderRepository.save(order);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public OrderDto findOrderById(UUID id) {
         Order order = orderRepository.findById(id).get();
         return mapOrderToOrderDto(order);
