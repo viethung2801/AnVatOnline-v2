@@ -162,6 +162,11 @@ public class UsersController {
         model.addAttribute("orderDtos",orderDtos);
         return "admin/page/user-detail";
     }
+    @GetMapping("/user-detail/")
+    public String showUserDetail(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("fail","Người dùng không tồn tại");
+        return "redirect:/admin/orders";
+    }
 //
     //search
     @GetMapping("/users/search")

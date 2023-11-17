@@ -63,22 +63,36 @@
                     <div class="d-md-flex justify-content-between">
                         <div class="d-flex align-items-center mb-2 mb-md-0">
                             <h2 class="mb-0">Mã đơn hàng: [[${orderDto.orderCode}]]</h2>
+                            <th:block th:if="${orderDto.status == 0}">
+                                <span class="badge bg-info text-dark">Đã đặt hàng</span>
+                            </th:block>
+                            <th:block th:if="${orderDto.status == 1}">
+                                <span class="badge bg-secondary">Đã xác nhận</span>
+                            </th:block>
+                            <th:block th:if="${orderDto.status == 2}">
+                                <span class="badge bg-warning text-dark">Đang giao</span>
+                            </th:block>
+                            <th:block th:if="${orderDto.status == 3}">
+                                <span class="badge bg-success">Đã nhận hàng</span>
+                            </th:block>
+
                             <th:block th:if="${orderDto.state==0}">
                                 <span class="badge bg-warning ms-2">Đang xử lý</span>
                             </th:block>
                             <th:block th:if="${orderDto.state==1}">
-                                <span class="badge bg-warning ms-2">Thành công</span>
+                                <span class="badge bg-success ms-2">Thành công</span>
                             </th:block>
                             <th:block th:if="${orderDto.state==2}">
-                                <span class="badge bg-warning ms-2">Đã hủy</span>
+                                <span class="badge bg-danger ms-2">Đã hủy</span>
                             </th:block>
                         </div>
                         <!-- select option -->
-                        <form class="d-md-flex" th:action="@{/admin/order/{orderId}(orderId=${orderDto.orderId})}" method="post">
+                        <form class="d-md-flex" th:action="@{/admin/order/{orderId}(orderId=${orderDto.orderId})}"
+                              method="post">
                             <div class="mb-2 mb-md-0">
-                                <select class="form-select" th:field="${orderDto.status}">
+                                <select class="form-select" name="status">
                                     <th:block th:if="${orderDto.status <= 0}">
-                                        <option value="0" disabled>Đã đặt hàng</option>
+                                        <option value="0" th:disabled="${orderDto.status+1 != 0}">Đã đặt hàng</option>
                                     </th:block>
 
                                     <th:block th:if="${orderDto.status <= 1}">
@@ -97,6 +111,12 @@
                             <!-- button -->
                             <div class="ms-md-3">
                                 <button class="btn btn-primary" th:disabled="${orderDto.state != 0}"> Cập nhật</button>
+                                <a th:href="'/admin/cancel-order/'+${orderDto.orderId}"
+                                   class="btn btn-danger"
+                                   th:classappend="${orderDto.state != 0 ? 'disabled' :''}"
+                                   onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này chứ')">
+                                    Hủy đơn
+                                </a>
                             </div>
                         </form>
                     </div>

@@ -25,15 +25,18 @@
                 <div class="col-xxl-3 col-sm-6">
                     <div class="card info-card sales-card">
                         <div class="card-body">
-                            <h5 class="card-title">Doanh thu trong ngày</h5>
+                            <h5 class="card-title">
+                                <a class="nav-link" href="/admin/orders">
+                                    Doanh thu trong ngày
+                                </a>
+                            </h5>
                             <div class="d-flex align-items-center">
+
                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-cart"></i>
+                                    <i class="bi bi-currency-dollar"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>145</h6>
-                                    <!--                                    <span class="text-success small pt-1 fw-bold">12%</span>-->
-                                    <!--                                    <span class="text-muted small pt-2 ps-1">increase</span>-->
+                                    <h6 th:text="${revenue < 1000 ? revenue : #numbers.formatDecimal(revenue,3,'COMMA',0,'POINT') + ' đ'}"></h6>
                                 </div>
                             </div>
                         </div>
@@ -45,16 +48,18 @@
                 <div class="col-xxl-3 col-sm-6">
                     <div class="card info-card revenue-card">
                         <div class="card-body">
-                            <h5 class="card-title">Đơn hàng trong ngày</h5>
+                            <h5 class="card-title">
+                                <a class="nav-link" href="/admin/orders/search?keys=&status=-1&state=1">
+                                    Đơn hàng thành công
+                                </a>
+                            </h5>
 
                             <div class="d-flex align-items-center">
                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-currency-dollar"></i>
+                                    <i class="bi bi-cart"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>$3,264</h6>
-                                    <!--                                    <span class="text-success small pt-1 fw-bold">8%</span>-->
-                                    <!--                                    <span class="text-muted small pt-2 ps-1">increase</span>-->
+                                    <h6 th:text="${orderSuccess < 1000 ? orderSuccess : #numbers.formatDecimal(orderSuccess,3,'COMMA',0,'POINT')}"></h6>
                                 </div>
                             </div>
                         </div>
@@ -64,15 +69,19 @@
 
                 <!-- Customers Card -->
                 <div class="col-xxl-3 col-sm-6">
-                    <div class="card info-card customers-card">
+                    <div class="card info-card revenue-card">
                         <div class="card-body">
-                            <h5 class="card-title">Đơn chờ xử lý</h5>
+                            <h5 class="card-title">
+                                <a class="nav-link" href="/admin/orders/search?keys=&status=-1&state=0">
+                                    Đơn chờ xử lý
+                                </a>
+                            </h5>
                             <div class="d-flex align-items-center">
                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-people"></i>
+                                    <i class="bi bi-box"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>1244</h6>
+                                    <h6 th:text="${orderProcess < 1000 ? orderProcess : #numbers.formatDecimal(orderProcess,3,'COMMA',0,'POINT')}"></h6>
                                 </div>
                             </div>
                         </div>
@@ -84,14 +93,15 @@
                 <div class="col-xxl-3 col-sm-6">
                     <div class="card info-card customers-card">
                         <div class="card-body">
-                            <h5 class="card-title">Đơn đã hủy</h5>
-
+                            <h5 class="card-title">
+                                <a class="nav-link" href="/admin/orders/search?keys=&status=-1&state=2">Đơn đã hủy</a>
+                            </h5>
                             <div class="d-flex align-items-center">
                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-people"></i>
+                                    <i class="bi bi-box"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>1244</h6>
+                                    <h6 th:text="${orderCancel < 1000 ? orderCancel : #numbers.formatDecimal(orderCancel,3,'COMMA',0,'POINT')}"></h6>
                                 </div>
                             </div>
                         </div>
@@ -107,21 +117,17 @@
                         <div class="filter">
                             <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                <li class="dropdown-header text-start">
-                                    <h6>Filter</h6>
+                                <li><a class="dropdown-item" th:href="'/admin/dashboard?dayBefore=7'">7 ngày trước</a></li>
+                                <li><a class="dropdown-item" th:href="'/admin/dashboard?dayBefore=14'">14 ngày trước</a>
                                 </li>
-
-                                <li><a class="dropdown-item" href="#">Today</a></li>
-                                <li><a class="dropdown-item" href="#">This Month</a></li>
-                                <li><a class="dropdown-item" href="#">This Year</a></li>
+                                <li><a class="dropdown-item" th:href="'/admin/dashboard?dayBefore=30'">30 ngày trước</a>
+                                </li>
                             </ul>
                         </div>
 
                         <div class="card-body">
-                            <h5 class="card-title">Reports <span>/Today</span></h5>
-
-                            <!-- Line Chart -->
-                            <div id="reportsChart"></div>
+                            <h5 class="card-title">Doanh số và lợi nhuận </h5>
+                            <canvas id="bar-chart-grouped" height="150"></canvas>
                         </div>
                     </div>
                 </div>
@@ -132,44 +138,48 @@
                         <div class="filter">
                             <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                <li class="dropdown-header text-start">
-                                    <h6>Filter</h6>
-                                </li>
-
-                                <li><a class="dropdown-item" href="#">Today</a></li>
-                                <li><a class="dropdown-item" href="#">This Month</a></li>
-                                <li><a class="dropdown-item" href="#">This Year</a></li>
+<!--                                <li class="dropdown-header text-start">-->
+<!--                                    <h6>Filter</h6>-->
+<!--                                </li>-->
+                                <li><a class="dropdown-item" th:href="'/admin/dashboard?bestSale=today'">Hôm nay</a></li>
+                                <li><a class="dropdown-item" th:href="'/admin/dashboard?bestSale=week'">7 ngày</a></li>
+                                <li><a class="dropdown-item" th:href="'/admin/dashboard?bestSale=month'">30 này</a></li>
                             </ul>
                         </div>
 
                         <div class="card-body pb-0">
-                            <h5 class="card-title">Top Selling <span>| Today</span></h5>
+                            <h5 class="card-title">Top 15 sản phẩm bán chạy</h5>
 
-                            <table class="table table-borderless">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Preview</th>
-                                    <th scope="col">Product</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Sold</th>
-                                    <th scope="col">Revenue</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <th scope="row">
-                                        <a href="#"><img src="/images/slide-1.jpg" alt=""></a>
-                                    </th>
-                                    <td>
-                                        <a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas
-                                            nulla</a>
-                                    </td>
-                                    <td>$64</td>
-                                    <td class="fw-bold">124</td>
-                                    <td>$5,828</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <div class="datatable-container">
+                                <table class="table datatable datatable-table">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Ảnh</th>
+                                        <th>Tên Sản phẩm</th>
+                                        <th>Giá bán</th>
+                                        <th>Số lượng</th>
+                                        <th>Doanh thu</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="products">
+                                    <tr th:each="p,i:${productReportDtos}" class="product-detail">
+                                        <td th:text="${i.index +1}"></td>
+                                        <td>
+                                            <img th:src="@{/images/{imageUrl} (imageUrl=${p.url})}" alt=""
+                                                 width="100px">
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/admin/product-detail/{productId}(productId=*{p.id})}"
+                                               th:text="${p.name}"></a>
+                                        </td>
+                                        <td th:text="${#numbers.formatDecimal(p.price,3,'COMMA',0,'POINT') + ' đ'}"></td>
+                                        <td th:text="${p.quantity}"></td>
+                                        <td th:text="${#numbers.formatDecimal(p.revenue,3,'COMMA',0,'POINT') + ' đ'}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -177,6 +187,55 @@
             </div>
             <!-- End Left side columns -->
         </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            new Chart(document.getElementById("bar-chart-grouped"), {
+                type: 'bar',
+                data: {
+                    labels: [[${labels}]],
+                    datasets: [
+                        {
+                            label: "Lợi nhuận",
+                            backgroundColor: "#3e95cd",
+                            data: [[${profitData}]]
+                        }, {
+                            label: "Doanh thu",
+                            backgroundColor: "#3CBA9F",
+                            data: [[${revenueData}]]
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                callback: function (value, index, values) {
+                                    if (parseInt(value) >= 1000) {
+                                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                    } else {
+                                        return value;
+                                    }
+                                }
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                return tooltipItem.yLabel.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Population growth (millions)'
+                    }
+                }
+            });
+            /*]]>*/
+        </script>
     </section>
 </main>
 </body>

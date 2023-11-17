@@ -835,6 +835,11 @@ h6 {
     background: #ffecdf;
 }
 
+.dashboard .order-success-card .card-icon {
+    color: #ff771d;
+    background: #ffecdf;
+}
+
 /* Activity */
 .dashboard .activity {
     font-size: 14px;

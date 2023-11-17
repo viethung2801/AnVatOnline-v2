@@ -65,7 +65,7 @@ th:replace="~{client-layout :: clientLayout(~{:: title},~{:: main})}">
                             <span class="badge bg-warning ms-2">Đang xử lý</span>
                         </th:block>
                         <th:block th:if="${orderDto.state==1}">
-                            <span class="badge bg-warning ms-2">Thành công</span>
+                            <span class="badge bg-success ms-2">Thành công</span>
                         </th:block>
                         <th:block th:if="${orderDto.state==2}">
                             <span class="badge bg-danger ms-2">Đã hủy</span>
@@ -75,7 +75,7 @@ th:replace="~{client-layout :: clientLayout(~{:: title},~{:: main})}">
                 <div class="d-flex align-content-center flex-wrap gap-2">
                     <a th:href="'/cancel-order/'+${orderDto.orderId}"
                        class="btn btn-danger"
-                       th:classappend="${orderDto.status >= 1 or orderDto.state != 0 ?'disabled':''}"
+                       th:classappend="${orderDto.status > 1 or orderDto.state != 0 ?'disabled':''}"
                        onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này chứ')" >
                         Hủy đơn
                     </a>

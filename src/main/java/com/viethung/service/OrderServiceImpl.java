@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -35,13 +35,13 @@ public class OrderServiceImpl {
         return new PageImpl<>(orderDtos, pageable, orders.getTotalElements());
     }
 
-    public boolean onCancelOrder(UUID orderId){
+    public boolean onCancelOrder(UUID orderId) {
         try {
             Order order = orderRepository.findById(orderId).get();
             order.setState(EOrderState.CANCEL);
             orderRepository.save(order);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -52,27 +52,32 @@ public class OrderServiceImpl {
         return mapOrderToOrderDto(order);
     }
 
-    public Page<OrderDto> findAllOrderByProduct(Product product,Pageable pageable) {
-        Page<Order> orders = orderRepository.findAllOrderByProductId(product.getId(),pageable);
+    public Page<OrderDto> findAllOrderByProduct(Product product, Pageable pageable) {
+        Page<Order> orders = orderRepository.findAllOrderByProductId(product.getId(), pageable);
         List<OrderDto> orderDtos = new ArrayList<>();
         orders.forEach(order -> orderDtos.add(mapOrderToOrderDto(order)));
-        return new PageImpl<OrderDto>(orderDtos,pageable,orders.getTotalElements());
+        return new PageImpl<OrderDto>(orderDtos, pageable, orders.getTotalElements());
     }
 
     public boolean handleUpdateStatus(UUID orderId, int status) {
         try {
             Order order = orderRepository.findById(orderId).get();
+
             switch (status) {
-                case 0 -> {order.setStatus(EOrderStatus.ORDERED);
+                case 0 -> {
+                    order.setStatus(EOrderStatus.ORDERED);
                     order.setCreatedDate(LocalDateTime.now());
                 }
-                case 1 -> {order.setStatus(EOrderStatus.CONFIRMED);
+                case 1 -> {
+                    order.setStatus(EOrderStatus.CONFIRMED);
                     order.setConfirmDate(LocalDateTime.now());
                 }
-                case 2 -> {order.setStatus(EOrderStatus.SHIPPING);
+                case 2 -> {
+                    order.setStatus(EOrderStatus.SHIPPING);
                     order.setShippedDate(LocalDateTime.now());
                 }
-                case 3 -> {order.setStatus(EOrderStatus.RECEIVED);
+                case 3 -> {
+                    order.setStatus(EOrderStatus.RECEIVED);
                     order.setReceivedDate(LocalDateTime.now());
                     order.setState(EOrderState.SUCCESS);
                 }
@@ -154,6 +159,126 @@ public class OrderServiceImpl {
         orderDetailDto.setProductImage(orderDetail.getProduct().getProductImages().get(0).getUrl());
 
         return orderDetailDto;
+    }
+
+    public Page<OrderDto> search(String keys, Integer status, Integer state, Pageable pageable) {
+            String code = keys;
+            String phoneNumber = "%" + keys + "%";
+            String email = "%" + keys + "%";
+            String receiverName = "%" + keys + "%";
+            List<EOrderStatus> eOrderStatus = geteOrderStatues(status);
+            List<EOrderState> eOrderState = geteOrderStates(state);
+        Page<Order> orders;
+//        if (!keys.isEmpty()) {
+//            String code = keys;
+//            String phoneNumber = "%" + keys + "%";
+//            String email = "%" + keys + "%";
+//            String receiverName = "%" + keys + "%";
+//            EOrderStatus eOrderStatus = geteOrderStatus(status);
+//            EOrderState eOrderState = geteOrderState(state);
+//
+//            orders = orderRepository
+//                    .findByCodeOrReceiverNameLikeOrEmailLikeOrPhoneNumberLikeAndStatusAndState(
+//                            code,
+//                            receiverName,
+//                            email,
+//                            phoneNumber,
+//                            eOrderStatus,
+//                            eOrderState,
+//                            pageable
+//                    );
+//        } else {
+//            List<EOrderStatus> eOrderStatuses = geteOrderStatues(status);
+//            List<EOrderState> eOrderStates = geteOrderStates(state);
+//            orders = orderRepository
+//                    .findByStatusInAndStateIn(
+//                            eOrderStatuses,
+//                            eOrderStates,
+//                            pageable
+//                    );
+//        }
+        orders = orderRepository.searchByKeysAndStateAndStatus(code,phoneNumber,email,receiverName,eOrderState,eOrderStatus,pageable);
+
+
+        List<OrderDto> orderDtos = new ArrayList<>();
+        orders.forEach(order -> {
+            orderDtos.add(mapOrderToOrderDto(order));
+        });
+        return new PageImpl<>(orderDtos, pageable, orders.getTotalElements());
+    }
+
+    private EOrderState geteOrderState(Integer state) {
+        switch (state) {
+            case 0 -> {
+                return EOrderState.PROCESS;
+            }
+            case 1 -> {
+                return EOrderState.SUCCESS;
+            }
+            case 2 -> {
+                return EOrderState.CANCEL;
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    private List<EOrderState> geteOrderStates(Integer state) {
+        switch (state) {
+            case 0 -> {
+                return List.of(EOrderState.PROCESS);
+            }
+            case 1 -> {
+                return List.of(EOrderState.SUCCESS);
+            }
+            case 2 -> {
+                return List.of(EOrderState.CANCEL);
+            }
+            default -> {
+                return List.of(EOrderState.PROCESS,EOrderState.SUCCESS,EOrderState.CANCEL);
+            }
+        }
+    }
+
+    private EOrderStatus geteOrderStatus(Integer status) {
+        switch (status) {
+            case 0 -> {
+                return EOrderStatus.ORDERED;
+            }
+            case 1 -> {
+                return EOrderStatus.CONFIRMED;
+            }
+            case 2 -> {
+                return EOrderStatus.SHIPPING;
+            }
+            case 3 -> {
+                return EOrderStatus.RECEIVED;
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    private List<EOrderStatus> geteOrderStatues(Integer status) {
+        switch (status) {
+            case 0 -> {
+                return List.of(EOrderStatus.ORDERED);
+            }
+            case 1 -> {
+                return List.of(EOrderStatus.CONFIRMED);
+            }
+            case 2 -> {
+                return List.of(EOrderStatus.SHIPPING);
+            }
+            case 3 -> {
+                return List.of(EOrderStatus.RECEIVED);
+            }
+            default -> {
+                return List.of(EOrderStatus.ORDERED, EOrderStatus.CONFIRMED, EOrderStatus.SHIPPING, EOrderStatus.RECEIVED);
+            }
+        }
     }
 }
 

@@ -35,6 +35,22 @@ public class OrdersController {
         return "admin/page/orders";
     }
 
+    @GetMapping("/orders/search")
+    public String onSearch(@RequestParam Optional<Integer> page,
+                           @RequestParam Optional<String> keys,
+                           @RequestParam Optional<Integer> status,
+                           @RequestParam Optional<Integer> state,
+                                   Model model) {
+        Pageable pageable = PageRequest.of(page.orElse(0), 50, Sort.by("createdDate").descending());
+        Page<OrderDto> orderDtos = orderService.search(
+                keys.orElse(""),
+                status.orElse(-1),
+                state.orElse(-1),
+                pageable);
+        model.addAttribute("orderDtos", orderDtos);
+        return "admin/page/orders";
+    }
+
     @GetMapping("/order-detail/{orderId}")
     public String displayOrderDetail(Model model,
                                      @PathVariable UUID orderId) {
@@ -44,18 +60,33 @@ public class OrdersController {
     }
 
     @PostMapping("/order/{orderId}")
-    public String onChangeStatus(Model model,
-                                 RedirectAttributes redirectAttributes,
+    public String onChangeStatus(RedirectAttributes redirectAttributes,
                                  @PathVariable UUID orderId,
                                  @RequestParam Integer status) {
-        boolean isUpdate = orderService.handleUpdateStatus(orderId, status);
-        if (isUpdate) {
-            redirectAttributes.addFlashAttribute("success", "Cập nhật thành công");
-        } else {
-            redirectAttributes.addFlashAttribute("fail", "Cập nhật thất bại");
+        try {
+            boolean isUpdate = orderService.handleUpdateStatus(orderId, status);
+            if (isUpdate) {
+                redirectAttributes.addFlashAttribute("success", "Cập nhật thành công");
+            } else {
+                redirectAttributes.addFlashAttribute("fail", "Cập nhật thất bại");
+            }
+            return "redirect:/admin/order-detail/"+orderId;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return "redirect:/admin/orders";
+        redirectAttributes.addFlashAttribute("fail", "Cập nhật thất bại");
+        return "redirect:/admin/order-detail/"+orderId;
     }
-
+    @GetMapping("/cancel-order/{orderId}")
+    public String displayOrderDetail(RedirectAttributes redirectAttributes,
+                                     @PathVariable UUID orderId) {
+        boolean isCancel = orderService.onCancelOrder(orderId);
+        if (isCancel){
+            redirectAttributes.addFlashAttribute("success","Hủy thành công");
+        }else {
+            redirectAttributes.addFlashAttribute("fail","Hủy thất bại");
+        }
+        return "redirect:/admin/order-detail/"+orderId.toString();
+    }
 
 }
