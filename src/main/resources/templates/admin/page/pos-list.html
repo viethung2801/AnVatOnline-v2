@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin-layout :: admin-layout(~{::title},~{::main})}">
+<head>
+    <title>Hóa đơn</title>
+</head>
+
+<body>
+<main id="main" class="main">
+    <div>
+        <div class="d-flex justify-content-between">
+            <div class="">
+                <div
+                        class="d-flex flex-wrap align-items-center justify-content-end gap-2 mb-3"
+                >
+                    <div>
+                        <a href="/admin/pos/create/new" class="btn btn-primary">
+                            <i class="bi bi-plus me-1"></i> Thêm mới
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="">
+                <select class="form-select" name="" id="">
+                    <option selected>Select one</option>
+                    <option value="">New Delhi</option>
+                    <option value="">Istanbul</option>
+                    <option value="">Jakarta</option>
+                    4
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4" th:each="o : ${orderDtos}">
+                <div class="border rounded-2 bg-white">
+                    <div class="d-flex justify-content-between">
+                        <div class="">
+                            <h5 th:text="${o.orderCode}"></h5>
+                            <p class="fw-bold" th:text="${o.userFullName ?: 'Khách lẻ'}">
+                            </p>
+                        </div>
+                        <div class="col-3 float-end">
+                            <a th:href="@{/admin/pos/{orderId}(orderId=${o.orderId})}" class="btn btn-success">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <!-- Button trigger modal -->
+                            <a class="btn btn-danger m-2">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <hr/>
+                    <ul class="list-inline">
+                        <li>Ngày Tạo: <span class="fw-bold"
+                                            th:text="${#temporals.format(o.createdDate,'dd-MM-yyy hh:mm:ss')}"></span>
+                        </li>
+                        <li>
+                            Tình trạng:
+                            <th:block th:if="${o.status == 0}">
+                                <span class="badge bg-info text-dark">Đã đặt hàng</span>
+                            </th:block>
+                            <th:block th:if="${o.status == 1}">
+                                <span class="badge bg-secondary">Đã xác nhận</span>
+                            </th:block>
+                            <th:block th:if="${o.status == 2}">
+                                <span class="badge bg-warning text-dark">Đang giao</span>
+                            </th:block>
+                            <th:block th:if="${o.status == 3}">
+                                <span class="badge bg-warning text-dark">Đã nhận</span>
+                            </th:block>
+                        </li>
+                        <li>
+                            Trạng thái:
+                            <span class="badge bg-warning text-dark">Đang xử lý</span>
+                        </li>
+                        <li>Tổng tiền:<span class="fw-bold"
+                                            th:text="${#numbers.formatDecimal(o.totalPrice,3,'COMMA',0,'POINT')+ ' đ'}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
+

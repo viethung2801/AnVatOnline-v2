@@ -40,4 +40,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     @Query("select count(o) from Order o where o.state=:state and cast(o.createdDate as localdate )  = current date ")
     Integer countOrderTodayByState(EOrderState state);
+
+    List<Order> findByState(EOrderState state);
 }

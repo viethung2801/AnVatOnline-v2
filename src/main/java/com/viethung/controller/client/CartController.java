@@ -43,14 +43,17 @@ public class CartController {
         List<CartDetailDto> cartDetailDtos;
         if (principal == null) {
             Cookie cookie = cartService.getCookie("cartId", request.getCookies());
-            UUID cartId = UUID.fromString(cookie.getValue());
-            cartDetailDtos = cartService.findAllById(cartId,response);
-            model.addAttribute("cartId",cartId);
+            UUID cartId = null;
+            if (cookie != null) {
+                cartId = UUID.fromString(cookie.getValue());
+            }
+            cartDetailDtos = cartService.findAllById(cartId, response);
+            model.addAttribute("cartId", cartId);
         } else {
 //            cartDetailDtos = cartService.findAllByUser()
             CustomUserDetails customUserDetails = (CustomUserDetails) principal.getPrincipal();
             cartDetailDtos = cartService.findByUser(customUserDetails.getId());
-            model.addAttribute("cartId",cartService.getCartId(customUserDetails.getId()));
+            model.addAttribute("cartId", cartService.getCartId(customUserDetails.getId()));
         }
 
         //gợi ý
@@ -64,28 +67,29 @@ public class CartController {
 
     @GetMapping("/add-cart/{productId}")
     public String onAddCart(@PathVariable Optional<UUID> productId,
-                       @RequestParam Optional<Integer> qty,
-                       Authentication principal,
-                       HttpServletRequest request,
-                       HttpServletResponse response,
-                       Model model,
-                       RedirectAttributes redirectAttributes) {
+                            @RequestParam Optional<Integer> qty,
+                            Authentication principal,
+                            HttpServletRequest request,
+                            HttpServletResponse response,
+                            Model model,
+                            RedirectAttributes redirectAttributes) {
         MessageDto message = null;
         if (principal == null) {
             message = cartService.addCartAnonymousUser(productId.orElse(null), qty.orElse(1), request, response);
-        }else {
+        } else {
             CustomUserDetails customUserDetails = (CustomUserDetails) principal.getPrincipal();
-            message = cartService.addCart(customUserDetails.getId(),productId.orElse(null), qty.orElse(1));
+            message = cartService.addCart(customUserDetails.getId(), productId.orElse(null), qty.orElse(1));
         }
-        redirectAttributes.addFlashAttribute(message.getStatus(),message.getMessage());
+        redirectAttributes.addFlashAttribute(message.getStatus(), message.getMessage());
         return "redirect:/my-cart";
     }
+
     @GetMapping("/update-cart/{cartDetailId}")
     public String onUpdateCart(@PathVariable Optional<UUID> cartDetailId,
-                            @RequestParam Optional<Integer> qty,
-                            RedirectAttributes redirectAttributes) {
-        MessageDto message = cartService.updateCartDetail(cartDetailId.orElse(null),qty.orElse(1));
-        redirectAttributes.addFlashAttribute(message.getStatus(),message.getMessage());
+                               @RequestParam Optional<Integer> qty,
+                               RedirectAttributes redirectAttributes) {
+        MessageDto message = cartService.updateCartDetail(cartDetailId.orElse(null), qty.orElse(1));
+        redirectAttributes.addFlashAttribute(message.getStatus(), message.getMessage());
         return "redirect:/my-cart";
     }
 
@@ -93,7 +97,7 @@ public class CartController {
     public String onDeleteCart(@PathVariable Optional<UUID> cartDetailId,
                                RedirectAttributes redirectAttributes) {
         MessageDto message = cartService.deleteCartDetail(cartDetailId.orElse(null));
-        redirectAttributes.addFlashAttribute(message.getStatus(),message.getMessage());
+        redirectAttributes.addFlashAttribute(message.getStatus(), message.getMessage());
         return "redirect:/my-cart";
     }
 

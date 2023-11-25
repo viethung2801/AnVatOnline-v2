@@ -5,14 +5,18 @@ import com.viethung.entity.Category;
 import com.viethung.entity.Product;
 import com.viethung.repository.CategoryRepository;
 import com.viethung.repository.ProductRepository;
+import com.viethung.service.DashBoardServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class HomeServiceImpl {
@@ -22,14 +26,23 @@ public class HomeServiceImpl {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private DashBoardServiceImpl dashBoardService;
+
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
 
     public List<ProductCardDto> findTop12BestSeller() {
-        Pageable pageable = PageRequest.of(0, 12);
-        List<Product> products = productRepository.findTop8BestSeller(pageable);
+        LocalDate date = LocalDate.now();
+        String[][] data = productRepository.findIdProductTop15BestSalesCreatedDateBetween(date.minusDays(30),date);
+
+        List<UUID> productIds = Arrays.stream(data).map(strings -> UUID.fromString(strings[0])).toList();
+
+        List<Product> products = productRepository.findAllById(productIds);
+
         List<ProductCardDto> productCardDtos = new ArrayList<>();
+
         products.forEach(product -> {
             productCardDtos.add(mapProductToProductCardDto(product));
         });

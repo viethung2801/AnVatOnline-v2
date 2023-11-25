@@ -50,11 +50,21 @@ public class ProductServiceImpl {
         keys = "%" + keys + "%";
         Page<Product> products = productRepository.searchAllByCodeLikeOrNameLike(keys, keys, pageable);
         List<ProductListDto> productListDtos = new ArrayList<>();
-        long total = products.getSize();
+        long total = products.getTotalElements();
         products.forEach(product -> {
             productListDtos.add(mapProductToProductListDto(product));
         });
         return new PageImpl<ProductListDto>(productListDtos, pageable, total);
+    }
+
+    public List<ProductListDto> searchTop7Product(String keys) {
+        keys = "%" + keys + "%";
+        List<Product> products = productRepository.searchTop7ByCodeLikeOrNameLikeAndStatus(keys, keys,EProductStatus.ACTIVE);
+        List<ProductListDto> productListDtos = new ArrayList<>();
+        products.forEach(product -> {
+            productListDtos.add(mapProductToProductListDto(product));
+        });
+        return productListDtos;
     }
 
     public ProductFormDto findProductFormById(UUID id) {

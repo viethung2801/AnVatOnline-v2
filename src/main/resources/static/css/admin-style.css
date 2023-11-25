@@ -1242,3 +1242,33 @@ h6 {
 .errors{
     color: red;
 }
+
+.suggestions-product-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-top: none;
+    display: none;
+}
+.suggestions-user-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-top: none;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: #f8f9fa;
+}

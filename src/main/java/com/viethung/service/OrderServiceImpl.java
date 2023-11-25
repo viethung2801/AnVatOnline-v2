@@ -23,8 +23,12 @@ import java.util.UUID;
 
 @Service
 public class OrderServiceImpl {
-    @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    public void setOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
     public Page<OrderDto> findAllOrderDto(Pageable pageable) {
         Page<Order> orders = orderRepository.findAll(pageable);
@@ -33,6 +37,15 @@ public class OrderServiceImpl {
             orderDtos.add(mapOrderToOrderDto(order));
         });
         return new PageImpl<>(orderDtos, pageable, orders.getTotalElements());
+    }
+
+    public List<OrderDto> getOrderProcess() {
+        List<Order> orders = orderRepository.findByState(EOrderState.PROCESS);
+        List<OrderDto> orderDtos = new ArrayList<>();
+        orders.forEach(order -> {
+            orderDtos.add(mapOrderToOrderDto(order));
+        });
+        return orderDtos;
     }
 
     public boolean onCancelOrder(UUID orderId) {
@@ -154,6 +167,7 @@ public class OrderServiceImpl {
         orderDetailDto.setId(orderDetail.getId().toString());
         orderDetailDto.setQuantity(orderDetail.getQuantity());
         orderDetailDto.setPrice(orderDetail.getPrice().intValue());
+        orderDetailDto.setPriceSale(orderDetail.getPriceSale() == null ? orderDetail.getPrice().intValue() : orderDetail.getPriceSale().intValue());
         orderDetailDto.setProductID(orderDetail.getProduct().getId().toString());
         orderDetailDto.setProductName(orderDetail.getProduct().getName());
         orderDetailDto.setProductImage(orderDetail.getProduct().getProductImages().get(0).getUrl());

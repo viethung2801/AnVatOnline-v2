@@ -197,4 +197,15 @@ public class AdminUserServiceImpl {
         orders.forEach(order -> orderDtos.add(orderService.mapOrderToOrderDto(order)));
         return new PageImpl<OrderDto>(orderDtos,pageable,orders.getTotalElements());
     }
+
+    public List<AdminUserDto> findByKeys(String keys){
+//        keys = "%"+keys+"%";
+        List<User> users = userRepository
+                .findTop7ByCodeLikeOrFirstNameLikeOrLastNameLikeOrEmailLikeOrPhoneNumberLike(
+                        keys,keys,keys,keys,keys
+                );
+
+        List<AdminUserDto> adminUserDtos = users.stream().map(this::mapUserToAdminUserDto).toList();
+        return adminUserDtos;
+    }
 }

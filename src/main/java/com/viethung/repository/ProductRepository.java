@@ -1,6 +1,7 @@
 package com.viethung.repository;
 
 import com.viethung.entity.Category;
+import com.viethung.entity.ENUM.EProductStatus;
 import com.viethung.entity.Product;
 import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     long countByCodeAndIdNot(String code, UUID id);
 
     Page<Product> searchAllByCodeLikeOrNameLike(String code, String name, Pageable pageable);
+
+    List<Product> searchTop7ByCodeLikeOrNameLikeAndStatus(String code, String name, EProductStatus status);
     @Query("select distinct p from Product p order by p.createdDate")
     List<Product> findTop8ProductNew(Pageable pageable);
 
