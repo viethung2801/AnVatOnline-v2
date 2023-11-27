@@ -139,6 +139,7 @@ public class CheckoutServiceImpl {
         orderDetail.setCreatedDate(LocalDateTime.now());
         orderDetail.setQuantity(cartDetail.getQuantity());
         orderDetail.setPrice(cartDetail.getProduct().getPrice());
+        orderDetail.setPriceSale(cartDetail.getProduct().getPrice());
         orderDetail.setProduct(cartDetail.getProduct());
 
         return orderDetail;

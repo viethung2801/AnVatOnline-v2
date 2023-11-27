@@ -31,11 +31,13 @@ public class CheckoutController {
     @Autowired
     private CartServiceImpl cartService;
 
+    //form checkout
     @GetMapping("/checkout")
     public String displayCheckoutDetail(@RequestParam("productId") Optional<UUID> productId,
                                         @RequestParam("qty") Optional<Integer> quantity,
                                         Model model,
                                         RedirectAttributes redirectAttributes) {
+        //product is null
         if (productId.orElse(null) == null) {
             redirectAttributes.addFlashAttribute("fail", "Vui lòng thử lại");
             return "redirect:/my-cart";
