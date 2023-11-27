@@ -7,13 +7,16 @@ import com.viethung.entity.ENUM.EOrderStatus;
 import com.viethung.entity.Order;
 import com.viethung.entity.OrderDetail;
 import com.viethung.entity.Product;
+import com.viethung.entity.User;
 import com.viethung.repository.OrderDetailRepository;
 import com.viethung.repository.OrderRepository;
+import com.viethung.utilities.OrderUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,10 +27,34 @@ import java.util.UUID;
 @Service
 public class OrderServiceImpl {
     private OrderRepository orderRepository;
+    private OrderUtilities orderUtilities;
 
     @Autowired
     public void setOrderRepository(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
+    }
+
+    @Autowired
+    public void setOrderUtilities(OrderUtilities orderUtilities) {
+        this.orderUtilities = orderUtilities;
+    }
+
+    @Transactional
+    public OrderDto newOrderDtoPos() {
+        Order order = Order.builder().build();
+
+        //set value
+        order.setCode(orderUtilities.generateOrderCode());
+        order.setCreatedDate(LocalDateTime.now());
+        order.setState(EOrderState.PROCESS);
+        order.setStatus(EOrderStatus.ORDERED);
+        order.setAddress("");
+        order.setEmail("");
+        order.setPhoneNumber("");
+        order.setReceiverName("");
+        //new order
+        order = orderRepository.save(order);
+        return mapOrderToOrderDto(order);
     }
 
     public Page<OrderDto> findAllOrderDto(Pageable pageable) {
@@ -109,6 +136,7 @@ public class OrderServiceImpl {
         orderDto.setOrderId(order.getId().toString());
         orderDto.setUserId(order.getUser() == null ? "" : order.getUser().getId().toString());
         orderDto.setUserFullName(order.getUser() == null ? "" : order.getUser().getLastName() + " " + order.getUser().getFirstName());
+        orderDto.setUserPhoneNumber(order.getUser() == null ? "" : order.getUser().getPhoneNumber());
         orderDto.setOrderCode(order.getCode());
         orderDto.setCreatedDate(order.getCreatedDate());
         orderDto.setConfirmedDate(order.getConfirmDate());
@@ -121,9 +149,11 @@ public class OrderServiceImpl {
         orderDto.setNote(order.getNote());
         orderDto.setTotalPrice(order.getTotalPrice());
         //
-        List<OrderDetailDto> orderDetailDtos = new ArrayList<>();
-        order.getOrderDetails().forEach(orderDetail -> orderDetailDtos.add(mapOrderDetailToOrderDetailDto(orderDetail)));
-        orderDto.setOrderDetailDtos(orderDetailDtos);
+        if (order.getOrderDetails() != null && !order.getOrderDetails().isEmpty()) {
+            List<OrderDetailDto> orderDetailDtos = new ArrayList<>();
+            order.getOrderDetails().forEach(orderDetail -> orderDetailDtos.add(mapOrderDetailToOrderDetailDto(orderDetail)));
+            orderDto.setOrderDetailDtos(orderDetailDtos);
+        }
 
         //
         switch (order.getStatus()) {
@@ -170,18 +200,20 @@ public class OrderServiceImpl {
         orderDetailDto.setPriceSale(orderDetail.getPriceSale() == null ? orderDetail.getPrice().intValue() : orderDetail.getPriceSale().intValue());
         orderDetailDto.setProductID(orderDetail.getProduct().getId().toString());
         orderDetailDto.setProductName(orderDetail.getProduct().getName());
-        orderDetailDto.setProductImage(orderDetail.getProduct().getProductImages().get(0).getUrl());
+        if (orderDetail.getProduct().getProductImages() != null) {
+            orderDetailDto.setProductImage(orderDetail.getProduct().getProductImages().get(0).getUrl());
+        }
 
         return orderDetailDto;
     }
 
     public Page<OrderDto> search(String keys, Integer status, Integer state, Pageable pageable) {
-            String code = keys;
-            String phoneNumber = "%" + keys + "%";
-            String email = "%" + keys + "%";
-            String receiverName = "%" + keys + "%";
-            List<EOrderStatus> eOrderStatus = geteOrderStatues(status);
-            List<EOrderState> eOrderState = geteOrderStates(state);
+        String code = keys;
+        String phoneNumber = "%" + keys + "%";
+        String email = "%" + keys + "%";
+        String receiverName = "%" + keys + "%";
+        List<EOrderStatus> eOrderStatus = geteOrderStatues(status);
+        List<EOrderState> eOrderState = geteOrderStates(state);
         Page<Order> orders;
 //        if (!keys.isEmpty()) {
 //            String code = keys;
@@ -211,7 +243,7 @@ public class OrderServiceImpl {
 //                            pageable
 //                    );
 //        }
-        orders = orderRepository.searchByKeysAndStateAndStatus(code,phoneNumber,email,receiverName,eOrderState,eOrderStatus,pageable);
+        orders = orderRepository.searchByKeysAndStateAndStatus(code, phoneNumber, email, receiverName, eOrderState, eOrderStatus, pageable);
 
 
         List<OrderDto> orderDtos = new ArrayList<>();
@@ -219,6 +251,17 @@ public class OrderServiceImpl {
             orderDtos.add(mapOrderToOrderDto(order));
         });
         return new PageImpl<>(orderDtos, pageable, orders.getTotalElements());
+    }
+
+    @Transactional
+    public boolean deleteOrder(UUID orderId) {
+        try {
+            orderRepository.deleteById(orderId);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private EOrderState geteOrderState(Integer state) {
@@ -250,7 +293,7 @@ public class OrderServiceImpl {
                 return List.of(EOrderState.CANCEL);
             }
             default -> {
-                return List.of(EOrderState.PROCESS,EOrderState.SUCCESS,EOrderState.CANCEL);
+                return List.of(EOrderState.PROCESS, EOrderState.SUCCESS, EOrderState.CANCEL);
             }
         }
     }
@@ -293,6 +336,43 @@ public class OrderServiceImpl {
                 return List.of(EOrderStatus.ORDERED, EOrderStatus.CONFIRMED, EOrderStatus.SHIPPING, EOrderStatus.RECEIVED);
             }
         }
+    }
+
+
+    @Transactional
+    public OrderDto updateUserInOrder(OrderDto orderDto) {
+        try {
+            Order order = orderRepository.findById(UUID.fromString(orderDto.getOrderId())).orElse(null);
+            if (order != null) {
+                order.setUser(
+                        orderDto.getUserId() == null
+                                ? null : User.builder().id(UUID.fromString(orderDto.getUserId())).build());
+                order = orderRepository.save(order);
+                return mapOrderToOrderDto(order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean payOrder(UUID uuid) {
+        try {
+            Order order = orderRepository.findById(uuid).orElse(null);
+            if (order != null){
+                order.setState(EOrderState.SUCCESS);
+                order.setStatus(EOrderStatus.RECEIVED);
+                order.setConfirmDate(LocalDateTime.now());
+                order.setShippedDate(LocalDateTime.now());
+                order.setReceivedDate(LocalDateTime.now());
+                orderRepository.save(order);
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
 

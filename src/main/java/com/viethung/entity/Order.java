@@ -94,9 +94,9 @@ public class Order {
 
     public int getTotalPrice() {
         int price = 0;
-        if (!orderDetails.isEmpty()) {
+        if (orderDetails != null && !orderDetails.isEmpty()) {
             for (OrderDetail orderDetail : orderDetails) {
-                price += (int) (orderDetail.getQuantity() * orderDetail.getPrice().intValue());
+                price += (int) (orderDetail.getQuantity() * (orderDetail.getPriceSale() == null ? orderDetail.getPrice().intValue() : orderDetail.getPriceSale().intValue()));
             }
         }
         return price;

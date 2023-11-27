@@ -19,6 +19,7 @@ public class OrderDto {
     private String orderId;
     private String userId;
     private String userFullName;
+    private String userPhoneNumber;
     private String orderCode;
     private LocalDateTime createdDate;
     private LocalDateTime confirmedDate;

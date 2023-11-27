@@ -36,7 +36,8 @@ public class DashBoardServiceImpl {
     private ProductRepository productRepository;
 
     public int getRevenueToday() {
-        List<Order> orders = orderRepository.getOrderSuccessToday(EOrderState.SUCCESS, EOrderStatus.RECEIVED);
+        List<Order> orders = orderRepository.getOrderSuccessToday(EOrderState.SUCCESS);
+        System.out.println(orders.size());
         int revenue;
         revenue = orders.stream().map(Order::getTotalPrice).reduce(0, Integer::sum);
         return revenue;

@@ -125,10 +125,10 @@
                             <!-- address -->
                             <div class="col-lg-4 col-md-4 col-12">
                                 <div class="mb-6">
-                                    <h6>Chi tiết người nhận</h6>
                                     <th:block th:if="${not orderDto.userId.isEmpty()}">
-                                        <a th:href="@{/admin/user-detail/{userId}(userId=${orderDto.userId})}">Xem chi
-                                            tiết</a>
+                                        <h6>Khách hàng</h6>
+                                        <a th:href="@{/admin/user-detail/{userId}(userId=${orderDto.userId})}"
+                                           th:text="${orderDto.userFullName}"></a>
                                     </th:block>
                                     <p class="mb-1 lh-lg">
                                         <span class="fw-bold">Người nhận:</span> [[${orderDto.receiverName}]]

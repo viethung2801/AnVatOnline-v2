@@ -16,6 +16,7 @@ public class OrderDetailDto {
     private int price;
     private int priceSale;
     private String productID;
+    private String orderID;
     private String productImage;
     private String productName;
 }

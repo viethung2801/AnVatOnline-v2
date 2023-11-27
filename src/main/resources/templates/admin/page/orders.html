@@ -181,7 +181,7 @@
                                             <td class="fw-bold"
                                                 th:text="${#numbers.formatDecimal(o.totalPrice,3,'POINT',0,'COMMA') + ' đ'}"></td>
                                             <td>
-                                                <a th:href="@{/admin/order-detail/{orderId}(orderId=${o.orderId})}">
+                                                <a th:href="@{/admin/pos/{orderId}(orderId=${o.orderId})}">
                                                     <i class="bi bi-pencil"></i>
                                                     Sửa
                                                 </a>

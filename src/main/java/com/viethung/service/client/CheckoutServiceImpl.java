@@ -16,6 +16,7 @@ import com.viethung.repository.OrderRepository;
 import com.viethung.repository.ProductRepository;
 import com.viethung.repository.UserRepository;
 import com.viethung.service.MailServiceImpl;
+import com.viethung.utilities.OrderUtilities;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,9 @@ public class CheckoutServiceImpl {
 
     @Autowired
     private MailServiceImpl mailService;
+
+    @Autowired
+    private OrderUtilities orderUtilities;
 
     public CartDetailDto newCartDetailDto(UUID productId, Integer quantity) {
         Product product = productRepository.findProductById(productId);
@@ -107,7 +111,7 @@ public class CheckoutServiceImpl {
     public Order mapCheckoutDtoToOrder(CheckoutDto checkoutDto, User user) {
         Order order = Order.builder().build();
         //map field
-        order.setCode(generateOrderCode());
+        order.setCode(orderUtilities.generateOrderCode());
         order.setCreatedDate(LocalDateTime.now());
         order.setStatus(EOrderStatus.ORDERED);//cờ xác nhận
         order.setState(EOrderState.PROCESS);//đang xử lý
@@ -130,7 +134,7 @@ public class CheckoutServiceImpl {
     public OrderDetail mapCartDetailToOrderDetail(Order order, CartDetail cartDetail) {
         OrderDetail orderDetail = OrderDetail.builder().build();
         //map field
-        orderDetail.setCode(generateOrderDetailCode());
+        orderDetail.setCode(orderUtilities.generateOrderDetailCode());
         orderDetail.setOrder(order);
         orderDetail.setCreatedDate(LocalDateTime.now());
         orderDetail.setQuantity(cartDetail.getQuantity());
@@ -140,25 +144,5 @@ public class CheckoutServiceImpl {
         return orderDetail;
     }
 
-    public String generateOrderCode() {
-        long num = orderRepository.count() + 1;
-        while (true) {
-            if (!orderRepository.existsByCode("HD0" + num)) {
-                break;
-            }
-            num++;
-        }
-        return "HD0" + num;
-    }
 
-    public String generateOrderDetailCode() {
-        long num = orderDetailRepository.count() + 1;
-        while (true) {
-            if (!orderDetailRepository.existsByCode("OD0" + num)) {
-                break;
-            }
-            num++;
-        }
-        return "OD0" + num;
-    }
 }

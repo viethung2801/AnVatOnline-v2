@@ -199,7 +199,7 @@ public class AdminUserServiceImpl {
     }
 
     public List<AdminUserDto> findByKeys(String keys){
-//        keys = "%"+keys+"%";
+        keys = "%"+keys+"%";
         List<User> users = userRepository
                 .findTop7ByCodeLikeOrFirstNameLikeOrLastNameLikeOrEmailLikeOrPhoneNumberLike(
                         keys,keys,keys,keys,keys

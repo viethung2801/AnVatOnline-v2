@@ -19,7 +19,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     inputValue.value = "";
                     suggestionsProductContainer.style.display = "none";
                     //thêm vào table ở dưới
-                    await tableContent.appendChild(newTableContent(product))
+                    if (await newTableContent(product)) {
+                        //create orderDetail
+                        let resp = await handleCreateOrderDetail(product)
+                        // console.log(resp)
+                        await tableContent.appendChild(newTableContent(product,resp.id))
+                    }
                     await getTotalPrice();
                 });
 
@@ -47,18 +52,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function update(evt) {
     const trEle = evt.target.parentNode.parentNode.parentNode
+    let id = trEle.querySelector('.orderDetailId').value
     let price = trEle.childNodes[5].childNodes[1].childNodes[1].value
     let quantity = trEle.childNodes[7].childNodes[1].childNodes[1].value
     let total = trEle.childNodes[9]
     total.innerHTML = await formatCurrency(quantity * price);
-
-    await getTotalPrice();
+    // await console.log(price)
+    await handleUpdateOrderDetail(id,quantity,price,getTotalPrice())
 }
-function getTotalPrice(){
+
+function getTotalPrice() {
     const trs = document.getElementsByClassName("order-card")
     let total = 0;
     for (let tr of trs) {
-        total += parseInt(tr.childNodes[9].textContent.replaceAll(",",""))
+        total += parseInt(tr.childNodes[9].textContent.replaceAll(",", ""))
     }
     document.getElementById("totalPrice").innerHTML = formatCurrency(total)
     document.getElementById("mustPay").innerHTML = formatCurrency(total)
@@ -67,39 +74,41 @@ function getTotalPrice(){
     minusMoney();
 }
 
-function minusMoney(){
-    let total = parseInt(document.getElementById("totalPrice").textContent.replaceAll(",",""));
+function minusMoney() {
+    let total = parseInt(document.getElementById("totalPrice").textContent.replaceAll(",", ""));
     let giveMoney = parseInt(document.getElementById("giveMoney").value);
     let lostMoney = document.getElementById("lostMoney");
 
     lostMoney.innerHTML = formatCurrency(giveMoney - total);
-    if (giveMoney - total < 0){
+    if (giveMoney - total < 0) {
         //disable btn thanh toan
         const btnPay = document.getElementById("btn-pay");
         btnPay.classList.add("disabled")
-    }else {
+    } else {
         const btnPay = document.getElementById("btn-pay");
         btnPay.classList.remove("disabled")
     }
 }
+
 async function remove(element) {
     const trEle = element.parentNode.parentNode;
     const tableEle = element.parentNode.parentNode.parentNode;
-
+    const orderDetailId = trEle.querySelector(".orderDetailId").value;
+    await handleDeleteOrderDetail(orderDetailId)
     await tableEle.removeChild(trEle)
     await getTotalPrice()
 }
 
-function newTableContent(product) {
+function newTableContent(product,orderDetailId) {
     const trs = document.getElementsByClassName("order-card")
     let isExists = false;
     for (let tr of trs) {
-        if (tr.classList.contains(product.id)){
+        if (tr.classList.contains(product.id)) {
             isExists = true;
         }
     }
 
-    if (!isExists){
+    if (!isExists) {
         let quantity = 1;
         let content = `
         <td class="col-4 d-flex">
@@ -129,7 +138,7 @@ function newTableContent(product) {
                 <i class="bi bi-trash"></i>
             </button>
         </td>
-        <input type="hidden">
+        <input type="hidden" class="orderDetailId" value="${orderDetailId}">
 `;
 
         const trElement = document.createElement("tr");
@@ -181,6 +190,58 @@ function newSuggestionItem(product) {
 function formatCurrency(value) {
     value = parseInt(value)
     return value.toLocaleString('en-US');
+}
+
+async function handleCreateOrderDetail(product) {
+
+    let data = {
+        quantity: 1,
+        price: parseInt(product.price),
+        priceSale: parseInt(product.price),
+        productID: product.id,
+        orderID: document.getElementById("orderId").value
+    };
+
+    // console.log(data)
+    const url = 'http://localhost:8080/api/order-details';
+    let resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    });
+    return await resp.json();
+}
+
+function handleUpdateOrderDetail(id,quantity, price, callback) {
+
+    let data = {
+        id,
+        quantity:parseInt(quantity),
+        priceSale: parseInt(price),
+    };
+    // console.log(data)
+    const url = 'http://localhost:8080/api/order-details';
+    fetch(url, {
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    }).then(callback)
+        .catch(r => console.log(r))
+}
+function handleDeleteOrderDetail(orderDetailId) {
+    const url = 'http://localhost:8080/api/order-details/'+orderDetailId;
+    fetch(url, {
+        method: 'DELETE',
+        headers: {
+            "Content-Type": "application/json",
+        }
+    }).then(resp=>{
+        // console.log(resp)
+    })
 }
 
 //btn

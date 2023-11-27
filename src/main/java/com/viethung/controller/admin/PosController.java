@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,16 +40,36 @@ public class PosController {
     }
 
     @GetMapping("/pos/create/new")
-    public String newOrder(Model model) {
-        return "admin/page/pos-detail";
+    public String newOrder() {
+        OrderDto orderDto = orderService.newOrderDtoPos();
+        return "redirect:/admin/pos/"+orderDto.getOrderId();
     }
 
     @GetMapping("/pos/{orderId}")
     public String detailOrder(Model model, @PathVariable Optional<UUID> orderId) {
         OrderDto orderDto = orderService.findOrderById(orderId.orElse(null));
-
         model.addAttribute("orderDto",orderDto);
-        System.out.println(orderDto);
+//        System.out.println(orderDto);
         return "admin/page/pos-detail";
+    }
+
+    @GetMapping("/pos/delete/{orderId}")
+    public String deleteOrder(@PathVariable Optional<UUID> orderId, RedirectAttributes redirectAttributes) {
+        if (orderService.deleteOrder(orderId.orElse(null))){
+            redirectAttributes.addFlashAttribute("success","Xóa thành công");
+        }else {
+            redirectAttributes.addFlashAttribute("fail","Có lỗi xảy ra vui lòng thử lại!");
+        }
+        return "redirect:/admin/pos";
+    }
+
+    @GetMapping("/pos/pay/{orderId}")
+    public String payOrder(@PathVariable Optional<UUID> orderId, RedirectAttributes redirectAttributes) {
+        if (orderService.payOrder(orderId.orElse(null))){
+            redirectAttributes.addFlashAttribute("success","Thanh toán thành công");
+        }else {
+            redirectAttributes.addFlashAttribute("fail","Có lỗi xảy ra vui lòng thử lại!");
+        }
+        return "redirect:/admin/pos";
     }
 }
