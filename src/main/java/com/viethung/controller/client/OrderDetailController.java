@@ -1,7 +1,7 @@
 package com.viethung.controller.client;
 
 import com.viethung.dto.OrderDto;
-import com.viethung.service.OrderServiceImpl;
+import com.viethung.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @Controller
 public class OrderDetailController {
     @Autowired
-    private OrderServiceImpl orderService;
+    private OrderService orderService;
 
 //    @GetMapping("/order-detail")
 //    public String displayView(Model model){

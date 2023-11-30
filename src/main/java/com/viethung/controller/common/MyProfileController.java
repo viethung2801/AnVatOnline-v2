@@ -4,13 +4,13 @@ import com.viethung.config.security.CustomUserDetails;
 import com.viethung.dto.AdminUserDto;
 import com.viethung.dto.ChangePasswordDto;
 import com.viethung.dto.OrderDto;
-import com.viethung.service.AdminUserServiceImpl;
+import com.viethung.service.AdminUserService;
+import com.viethung.service.impl.AdminUserServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,13 +21,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
 import java.util.Optional;
 
 @Controller
 public class MyProfileController {
     @Autowired
-    private AdminUserServiceImpl adminUserService;
+    private AdminUserService adminUserService;
     @GetMapping("/my-profile")
     public String displayView(Model model,
                               @RequestParam Optional<Integer> page,

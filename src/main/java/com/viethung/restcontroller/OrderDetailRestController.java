@@ -1,11 +1,8 @@
 package com.viethung.restcontroller;
 
 import com.viethung.dto.OrderDetailDto;
-import com.viethung.entity.OrderDetail;
-import com.viethung.repository.OrderDetailRepository;
-import com.viethung.repository.OrderRepository;
-import com.viethung.service.OrderDetailServiceImpl;
-import com.viethung.service.OrderServiceImpl;
+import com.viethung.service.OrderDetailService;
+import com.viethung.service.impl.OrderDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,7 +21,7 @@ import java.util.UUID;
 @RequestMapping("/api")
 public class OrderDetailRestController {
 
-    private OrderDetailServiceImpl orderDetailService;
+    private OrderDetailService orderDetailService;
 
     @Autowired
     public void setOrderDetailService(OrderDetailServiceImpl orderDetailService) {

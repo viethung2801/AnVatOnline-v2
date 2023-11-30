@@ -2,7 +2,8 @@ package com.viethung.controller.common;
 
 
 import com.viethung.dto.ChangePasswordDto;
-import com.viethung.service.ChangePasswordServiceImpl;
+import com.viethung.service.ChangePasswordService;
+import com.viethung.service.impl.ChangePasswordServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,7 +18,7 @@ import java.security.Principal;
 @Controller
 public class ChangPasswordController {
     @Autowired
-    private ChangePasswordServiceImpl changePasswordService;
+    private ChangePasswordService changePasswordService;
 
     @PostMapping("/change-password")
     public String doChangePassword(@Valid @ModelAttribute ChangePasswordDto changePasswordDto,

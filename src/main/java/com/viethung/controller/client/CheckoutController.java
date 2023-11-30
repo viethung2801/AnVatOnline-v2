@@ -3,9 +3,8 @@ package com.viethung.controller.client;
 import com.viethung.config.security.CustomUserDetails;
 import com.viethung.dto.CartDetailDto;
 import com.viethung.dto.CheckoutDto;
-import com.viethung.entity.CartDetail;
-import com.viethung.service.client.CartServiceImpl;
-import com.viethung.service.client.CheckoutServiceImpl;
+import com.viethung.service.CheckoutService;
+import com.viethung.service.impl.CartServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -26,7 +25,7 @@ import java.util.UUID;
 @Controller
 public class CheckoutController {
     @Autowired
-    private CheckoutServiceImpl checkoutService;
+    private CheckoutService checkoutService;
 
     @Autowired
     private CartServiceImpl cartService;

@@ -1,7 +1,7 @@
 package com.viethung.restcontroller;
 
 import com.viethung.dto.ProductListDto;
-import com.viethung.service.ProductServiceImpl;
+import com.viethung.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class ProductRestController {
-    private ProductServiceImpl productService;
+    private ProductService productService;
 
     @Autowired
-    public void setProductService(ProductServiceImpl productService) {
+    public void setProductService(ProductService productService) {
         this.productService = productService;
     }
 

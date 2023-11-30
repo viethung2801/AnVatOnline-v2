@@ -3,8 +3,8 @@ package com.viethung.controller.admin;
 import com.viethung.dto.AdminUserDto;
 import com.viethung.dto.OrderDto;
 import com.viethung.entity.User;
-import com.viethung.service.AdminUserServiceImpl;
-import com.viethung.service.RegisterServiceImpl;
+import com.viethung.service.AdminUserService;
+import com.viethung.service.RegisterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,10 +28,10 @@ import java.util.UUID;
 @RequestMapping("/admin")
 public class UsersController {
     @Autowired
-    private AdminUserServiceImpl adminUserService;
+    private AdminUserService adminUserService;
 
     @Autowired
-    private RegisterServiceImpl registerService;
+    private RegisterService registerService;
 
 
     @GetMapping("/users")

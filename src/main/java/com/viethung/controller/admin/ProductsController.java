@@ -5,9 +5,9 @@ import com.viethung.dto.ProductFormDto;
 import com.viethung.dto.ProductListDto;
 import com.viethung.entity.Category;
 import com.viethung.entity.Product;
-import com.viethung.service.CategoryServiceImpl;
-import com.viethung.service.OrderServiceImpl;
-import com.viethung.service.ProductServiceImpl;
+import com.viethung.service.CategoryService;
+import com.viethung.service.OrderService;
+import com.viethung.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,13 +34,13 @@ import java.util.UUID;
 @RequestMapping("/admin")
 public class ProductsController {
     @Autowired
-    private ProductServiceImpl productService;
+    private ProductService productService;
 
     @Autowired
-    private CategoryServiceImpl categoryService;
+    private CategoryService categoryService;
 
     @Autowired
-    private OrderServiceImpl orderService;
+    private OrderService orderService;
 
 
     @GetMapping("/products")

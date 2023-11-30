@@ -1,7 +1,7 @@
 package com.viethung.controller.admin;
 
 import com.viethung.dto.OrderDto;
-import com.viethung.service.OrderServiceImpl;
+import com.viethung.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequestMapping("/admin")
 public class OrdersController {
     @Autowired
-    private OrderServiceImpl orderService;
+    private OrderService orderService;
 
     @GetMapping("/orders")
     public String displayOrderList(@RequestParam Optional<Integer> page,

@@ -2,7 +2,7 @@ package com.viethung.controller.admin;
 
 import com.viethung.dto.CategoryDto;
 import com.viethung.entity.Category;
-import com.viethung.service.CategoryServiceImpl;
+import com.viethung.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,7 +26,7 @@ import java.util.UUID;
 @RequestMapping("/admin")
 public class CategoriesController {
     @Autowired
-    private CategoryServiceImpl categoryService;
+    private CategoryService categoryService;
 
     @GetMapping("/categories")
     public String displayView(@RequestParam Optional<Integer> page,

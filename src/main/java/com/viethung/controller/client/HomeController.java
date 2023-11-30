@@ -2,8 +2,7 @@ package com.viethung.controller.client;
 
 import com.viethung.dto.ProductCardDto;
 import com.viethung.entity.Category;
-import com.viethung.service.CategoryServiceImpl;
-import com.viethung.service.client.HomeServiceImpl;
+import com.viethung.service.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +14,7 @@ import java.util.List;
 public class HomeController {
 
     @Autowired
-    private HomeServiceImpl homeService;
+    private HomeService homeService;
 
     @GetMapping("/")
     public String home(Model model) {

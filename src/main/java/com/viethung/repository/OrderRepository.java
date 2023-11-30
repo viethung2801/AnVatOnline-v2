@@ -35,7 +35,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     @Query("select o,o.orderDetails from Order o where o.status = :status and o.state = :state and cast( o.createdDate as localdate ) = current date ")
     List<Order> getOrderSuccessToday(EOrderState state, EOrderStatus status);
 
-    @Query("select o,o.orderDetails from Order o where o.state = :state and cast( o.createdDate as localdate ) = current date ")
+    @Query("select o from Order o where o.state = :state and cast( o.createdDate as localdate ) = current date ")
     List<Order> getOrderSuccessToday(EOrderState state);
 
     @Query("select count(o) from Order o where cast(o.createdDate as localdate )  = current date ")

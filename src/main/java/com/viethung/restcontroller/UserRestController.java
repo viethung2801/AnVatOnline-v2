@@ -2,13 +2,11 @@ package com.viethung.restcontroller;
 
 import com.viethung.dto.AdminUserDto;
 import com.viethung.dto.OrderDto;
-import com.viethung.service.AdminUserServiceImpl;
-import com.viethung.service.OrderServiceImpl;
+import com.viethung.service.AdminUserService;
+import com.viethung.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,16 +18,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class UserRestController {
-    private AdminUserServiceImpl adminUserService;
-    private OrderServiceImpl orderService;
+    private AdminUserService adminUserService;
+    private OrderService orderService;
 
     @Autowired
-    public void setOrderService(OrderServiceImpl orderService) {
+    public void setOrderService(OrderService orderService) {
         this.orderService = orderService;
     }
 
     @Autowired
-    public void setAdminUserService(AdminUserServiceImpl adminUserService) {
+    public void setAdminUserService(AdminUserService adminUserService) {
         this.adminUserService = adminUserService;
     }
 

@@ -1,13 +1,8 @@
 package com.viethung.controller.admin;
 
-import com.viethung.dto.OrderDetailDto;
 import com.viethung.dto.OrderDto;
-import com.viethung.service.OrderServiceImpl;
+import com.viethung.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,10 +18,10 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/admin")
 public class PosController {
-    private OrderServiceImpl orderService;
+    private OrderService orderService;
 
     @Autowired
-    public void setOrderService(OrderServiceImpl orderService) {
+    public void setOrderService(OrderService orderService) {
         this.orderService = orderService;
     }
 

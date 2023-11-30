@@ -2,7 +2,7 @@ package com.viethung.controller.client;
 
 import com.viethung.dto.ProductCardDto;
 import com.viethung.dto.ProductDetailDto;
-import com.viethung.service.client.ProductDetailServiceImpl;
+import com.viethung.service.ProductDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Controller
 public class DetailProductController {
     @Autowired
-    private ProductDetailServiceImpl productDetailService;
+    private ProductDetailService productDetailService;
     @GetMapping("/product-detail")
     public String temp(Model model){
         return "client/page/product-detail";
