@@ -18,8 +18,11 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         request -> {
-                            request.requestMatchers("/my-profile").authenticated();
-                            request.requestMatchers("/admin/**").hasAnyRole("ADMIN");
+                            // Use explicit AntPathRequestMatcher to avoid ambiguity when there are multiple servlets
+                            request.requestMatchers(new AntPathRequestMatcher("/my-profile")).authenticated();
+                            request.requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAnyRole("ADMIN");
+                            // Allow H2 console access when embedded (H2 registers its own servlet)
+                            request.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll();
                             request.anyRequest().permitAll();
                         }
                 ).formLogin(
@@ -34,6 +37,8 @@ public class WebSecurityConfig {
                                 .permitAll()
                 )
                 .exceptionHandling(exception -> exception.accessDeniedPage("/403"))
+                // Allow frames from same origin so H2 console can render in a frame
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
         ;
         return httpSecurity.build();
     }
